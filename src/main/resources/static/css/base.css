@@ -1,0 +1,11 @@
+main {
+	margin-top: 1rem;
+}
+
+thead {
+	background: white;
+}
+
+tbody tr:hover {
+	background: #f8f9fa;
+}

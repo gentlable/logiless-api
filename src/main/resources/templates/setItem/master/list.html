@@ -1,0 +1,128 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment">
+</head>
+
+<body>
+	<div th:replace="common/header :: header_fragment(title=#{text.setItemMaster})"></div>
+	<main>
+		<div class="container">
+			<div class="container">
+				<form class="row g-3">
+					<div class="col-4">
+						<label for="tenpo" class="form-label" th:text="店舗"></label>
+						<select id="tenpo" name="tenpoCode" class="form-select">
+							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}">
+							</option>
+						</select>
+					</div>
+					<div class="col-4">
+						<label for="setItemCode" class="form-label" th:text="セット商品ＣＤ"></label>
+						<input type="text" class="form-control" id="setItemCode" name="setItemCode"
+							placeholder="1234567890">
+					</div>
+					<div class="col-4">
+						<label for="setItemName" class="form-label" th:text="セット商品名"></label>
+						<input type="text" class="form-control" id="setItemName" placeholder="キリンセット">
+					</div>
+					<div class="col-2">
+						<button type="submit" class="btn btn-primary">検索</button>
+					</div>
+					<div class="col-2">
+						<button type="submit" class="btn btn-primary">CSV出力</button>
+					</div>
+				</form>
+			</div>
+			<div class="container">
+				<form>
+					<div class="container mb-4 overflow-auto" style="height:55vh;">
+						<table class="table">
+							<thead class="sticky-top">
+								<tr>
+									<th scope="col" class="text-center">削除</th>
+									<th scope="col" class="text-center">項番</th>
+									<th scope="col" class="text-center">店舗コード</th>
+									<th scope="col" class="text-center">セット商品コード</th>
+									<th scope="col" class="text-center">セット商品名</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="edit" th:each="result, i : ${resultList}">
+									<td class="text-center click-check">
+										<input class="form-check-input" type="checkbox" value="">
+									</td>
+									<th class="text-center" th:text="${i.count}" scope="row"></th>
+									<td class="text-center" th:text="${result.tenpoCode}"></td>
+									<td class="text-center setItemCode">
+										<a href="#" th:text="${result.code}"
+											th:href="@{/setItem/master/detail(tenpoCode=${result.tenpoCode},setItemCode=${result.code})}"></a>
+									</td>
+									<td class="" th:text="${result.name}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="container">
+						<div class="row">
+							<div class="col-2">
+								<button type="button" class="btn btn-primary" id="selectAllBtn"
+									onclick="checkAll(true)">全選択</button>
+							</div>
+							<div class="col-2">
+								<button type="button" class="btn btn-primary" id="clearAllBtn"
+									onclick="checkAll(false)">全解除</button>
+							</div>
+							<div class="col-2">
+								<button type="button" class="btn btn-primary"
+									onclick="location.href='/setItem/master/detail'">追加</button>
+							</div>
+							<div class="col-2">
+								<button type="submit" class="btn btn-primary">削除</button>
+							</div>
+							<div class="col-2">
+								<button type="button" class="btn btn-primary" onclick="location.href='/'">戻る</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+	<script>
+		// 全選択、全解除
+		function checkAll(boolean) {
+			let elements = document.querySelectorAll('.form-check-input')
+			for (let i = 0; i < elements.length; i++) {
+				elements[i].checked = boolean;
+			}
+		}
+
+		// 削除セルクリックでチェックボックス操作
+		function check(e) {
+			e.srcElement.children[0].checked = !e.srcElement.children[0].checked
+		}
+
+		// 行クリックで編集画面へ遷移
+		function edit(e) {
+			if (e.srcElement.className.indexOf('click-check') !== -1) {
+				return
+			}
+			let setItemCode = e.srcElement.parentElement.children[3].innerHTML
+		}
+
+		// TODO 行にクリックイベント付与
+		let editElements = document.querySelectorAll('.edit')
+		let checkElements = document.querySelectorAll('.click-check')
+
+		for (let i = 0; i < editElements.length; i++) {
+			editElements[i].onclick = edit
+		}
+
+		for (let i = 0; i < checkElements.length; i++) {
+			checkElements[i].onclick = check
+		}
+	</script>
+</body>
+
+</html>

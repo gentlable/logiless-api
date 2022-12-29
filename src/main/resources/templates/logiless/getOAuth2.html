@@ -1,0 +1,19 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment"></head>
+
+<body>
+	<div th:replace="common/header :: header_fragment(title='ロジレス認証完了画面')"></div>
+	<main>
+		<div class="container">
+			<h1>ロジレス連携に成功した！！！</h1>
+			<p th:text="${status_code}"></p>
+			<p th:text="${access_token}"></p>
+			<p th:text="${refresh_token}"></p>
+		</div>
+	</main>
+
+</body>
+
+</html>
