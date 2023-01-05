@@ -1,0 +1,72 @@
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment"></head>
+
+<body>
+	<div th:replace="common/header :: header_fragment(title='店舗編集')"></div>
+
+	<main>
+		<div class="container">
+			<p th:text="${message}"></p>
+			<form action="#" th:action="@{/demo/editTenpoList}" th:object="${tenpoListForm}" method="post">
+				<div id="form-data" >
+					<div th:each="tenpo, st: *{tenpoList}">
+						<button type="button" name="deleteBtn">削除</button>
+						<input type="text" th:field="*{tenpoList[__${st.index}__].code}" />
+						<input type="text" th:field="*{tenpoList[__${st.index}__].name}" />
+					</div>
+				</div>
+				<div>
+					<button type="button" onclick="add()">行追加</button>
+					<button type="submit">登録</button>
+				</div>
+			</form>
+		</div>
+	</main>
+	<script>
+		let btns = document.querySelectorAll("button[name='deleteBtn']")
+		for(let i = 0; i < btns.length; i++) {
+			btns[i].addEventListener("click", deleteRow)
+		}
+		console.log(btns)
+		
+		function add() {
+			let data = document.querySelector("#form-data")
+			
+			let num = data.children.length
+			
+			const label = "tenpoList"
+			
+			let newRow = document.createElement("div")
+			let newButton = document.createElement("button")
+			newButton.type = "button"
+			newButton.name = "deleteBtn"
+			newButton.innerHTML = "削除"
+			newButton.addEventListener("click", deleteRow)
+
+			let newCode = document.createElement("input")
+			newCode.type = "text"
+			newCode.id = label + num + ".code"
+			newCode.name = label + "[" +num + "]" +".code"
+
+			let newName = document.createElement("input")
+			newName.type = "text"
+			newName.id = label + num + ".name"
+			newName.name = label + "[" +num + "]" +".name"
+			
+			newRow.appendChild(newButton)
+			newRow.appendChild(newCode)
+			newRow.appendChild(newName)
+
+			data.appendChild(newRow)
+		}
+		function deleteRow(e) {
+			console.log(e.srcElement)
+			e.srcElement.parentElement.remove()
+			
+		}
+	</script>
+
+</body>
+
+</html>

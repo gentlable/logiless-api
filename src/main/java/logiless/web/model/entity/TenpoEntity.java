@@ -20,8 +20,5 @@ public class TenpoEntity {
 	
 	@Column
 	private String name;
-	
-	@Column
-	private int id;
 
 }

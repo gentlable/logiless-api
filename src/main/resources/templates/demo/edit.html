@@ -1,0 +1,40 @@
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment"></head>
+
+<body>
+	<div th:replace="common/header :: header_fragment(title='店舗編集')"></div>
+
+	<main>
+		<div class="container">
+			<p th:text="${message}"></p>
+			<form action="#" th:action="@{/demo/edit}" th:object="${tenpo}" method="post">
+				<div class="container" id="form-data">
+					<div>
+						<button type="button" onclick="deleteData()">削除</button>
+						<input type="text" th:value="${tenpo.code}" th:field="*{code}" />
+						<input type="text" th:value="${tenpo.name}" th:field="*{name}" />
+					</div>
+				</div>
+				<div>
+					<button type="button" onclick="add()">行追加</button>
+					<button type="submit">登録</button>
+				</div>
+			</form>
+		</div>
+	</main>
+	<script>
+		function add() {
+			let data = document.getElementById("form-data")
+			let newData = document.createElement("p")
+			newData.innerHTML = "追加項目"
+			data.appendChild(newData)
+		}
+		function deleteData(e) {
+			console.log(e)
+		}
+	</script>
+
+</body>
+
+</html>
