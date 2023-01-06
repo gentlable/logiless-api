@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import logiless.web.config.SessionSample;
 import logiless.web.model.dto.LogilessResponse;
 import logiless.web.model.dto.OAuth2;
+import logiless.web.model.dto.Tenpo;
 import logiless.web.model.service.OAuth2Service;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LogilessController {
 
-	private static final String merchantId = "782";
+	private static final String merchantId = "1022";
 
 	@Autowired
 	protected SessionSample sessionSample;
@@ -69,8 +70,8 @@ public class LogilessController {
 		return "logiless/getOAuth2";
 	}
 	
-	@GetMapping("/logiless/get/stores/api")
-	public String logilessGetStoresApi(Model model, boolean... bs) {
+	@GetMapping("/logiless/get/tenpos/api")
+	public String logilessGetTenposApi(Model model, boolean... bs) {
 
 		RestTemplate rest = new RestTemplate();
 
@@ -88,11 +89,11 @@ public class LogilessController {
 			ObjectMapper mapper = new ObjectMapper();
 
 			//JSON⇒Javaオブジェクトに変換
-			LogilessResponse data = mapper.readValue(json, LogilessResponse.class);
+			LogilessResponse<Tenpo> data = mapper.readValue(json, LogilessResponse.class);
 			
-			model.addAttribute("storeList", data.getData());
+			model.addAttribute("tenpoList", data.getData());
 
-			return "master/storeList";
+			return "master/tenpoList";
 		} catch (HttpClientErrorException e){
 			e.printStackTrace();
 			
@@ -102,7 +103,53 @@ public class LogilessController {
 			}
 			
 			if(!bs[0]) {
-				return logilessGetStoresApi(model, true);
+				return logilessGetTenposApi(model, true);
+			} else {
+				System.out.println("システムエラー");
+				return "";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			return "";
+		}
+	}
+	
+	
+	@GetMapping("/logiless/api/get/salesOrders")
+	public String logilessApiGetSalesOrders(Model model, boolean... bs) {
+
+		RestTemplate rest = new RestTemplate();
+
+		final String endpoint = "https://app2.logiless.com/api/v1/merchant/{merchant_id}/sales_orders";
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", "Bearer " + sessionSample.getAccess_token());
+		try {
+			// リクエスト情報の作成
+			RequestEntity<?> req = RequestEntity.get(endpoint, merchantId).headers(headers).build();
+			
+			ResponseEntity<String> res = rest.exchange(req, String.class);
+			String json = res.getBody();
+			
+			ObjectMapper mapper = new ObjectMapper();
+
+			//JSON⇒Javaオブジェクトに変換
+			LogilessResponse<Tenpo> data = mapper.readValue(json, LogilessResponse.class);
+			
+			model.addAttribute("tenpoList", data.getData());
+
+			return "master/tenpoList";
+		} catch (HttpClientErrorException e){
+			e.printStackTrace();
+			
+			if(!oauth2Service.refreshToken()) {
+				System.out.println("トークンリフレッシュに失敗しました。");
+				return "";
+			}
+			
+			if(!bs[0]) {
+				return logilessGetTenposApi(model, true);
 			} else {
 				System.out.println("システムエラー");
 				return "";

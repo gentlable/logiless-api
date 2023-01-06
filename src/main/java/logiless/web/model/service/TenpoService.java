@@ -72,6 +72,22 @@ public class TenpoService {
 	/**
 	 * @return
 	 */
+	public boolean updateTenpo(Tenpo tenpo) {
+
+		TenpoEntity entity = new TenpoEntity();
+		BeanUtils.copyProperties(tenpo, entity);
+		try {
+//			tenpoRepository.setName(tenpo.getName(), tenpo.getCode());
+		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @return
+	 */
 	public boolean insertTenpoList(TenpoListForm tenpoListForm) {
 		
 		List<Tenpo> tenpoList = tenpoListForm.getTenpoList();

@@ -20,10 +20,10 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="edit" th:each="store, i : ${storeList}">
+								<tr class="edit" th:each="tenpo, i : ${tenpoList}">
 									<th class="text-center" th:text="${i.count}" scope="row"></th>
-									<td class="text-center" th:text="${store.code}"></td>
-									<td class="text-center" th:text="${store.name}"></td>
+									<td class="text-center" th:text="${tenpo.code}"></td>
+									<td class="text-center" th:text="${tenpo.name}"></td>
 								</tr>
 							</tbody>
 						</table>

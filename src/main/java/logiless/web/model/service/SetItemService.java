@@ -14,6 +14,7 @@ import logiless.web.model.dto.Tenpo;
 import logiless.web.model.entity.BaraItemEntity;
 import logiless.web.model.entity.SetItemEntity;
 import logiless.web.model.entity.TenpoEntity;
+import logiless.web.model.form.SetItemForm;
 import logiless.web.model.repository.BaraItemRepository;
 import logiless.web.model.repository.SetItemRepository;
 import logiless.web.model.repository.TenpoRepository;
@@ -113,6 +114,44 @@ public class SetItemService {
 			baraItemList.add(baraItem);
 		}
 		return baraItemList;
+	}
+
+	/**
+	 * セット商品マスターとバラ商品マスターに登録する。
+	 * @param setItemForm
+	 * @return
+	 */
+	public boolean insertSetItem(SetItemForm setItemForm) {
+		
+		
+		SetItemEntity setItemEntity = new SetItemEntity();
+		BeanUtils.copyProperties(setItemForm.getSetItem(), setItemEntity);
+		
+		try {
+			setItemRepository.save(setItemEntity);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		
+		List<BaraItem> baraItemList = setItemForm.getBaraItemList();
+		
+		try {
+			for(BaraItem baraItem : baraItemList) {
+				if(baraItem.getCode() == null || baraItem.getCode().equals("")) {
+					continue;
+				}
+				BaraItemEntity baraItemEntity = new BaraItemEntity();
+				BeanUtils.copyProperties(baraItem, baraItemEntity);
+				baraItemRepository.save(baraItemEntity);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return false;
 	}
 
 	// 共通化？

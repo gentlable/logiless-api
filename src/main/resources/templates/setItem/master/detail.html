@@ -9,53 +9,55 @@
 	<main>
 		<div class="container">
 			<div class="container">
-				<form class="row g-3">
+				<form action="#" class="row g-3" th:object="${setItemForm}" method="post">
 					<div class="col-4">
-						<label for="store" class="form-label" th:text="店舗"></label>
-						<select id="store" name="store" class="form-select">
-							<option th:each="store : ${storeList}" th:value="store.code" th:text="${store.name}">
+						<label for="tenpo" class="form-label" th:text="店舗"></label>
+						<select class="form-select" th:field="*{setItem.tenpoCode}">
+							<option th:each="tenpo : ${tenpoList}" th:value="tenpo.code" th:text="${tenpo.name}">
 							</option>
 						</select>
 					</div>
 					<div class="col-4">
 						<label for="setItemCode" class="form-label" th:text="セット商品ＣＤ"></label>
-						<input type="text" class="form-control" id="setItemCode" th:value="${setItemCode}"
-							placeholder="001234">
+						<input type="text" class="form-control" th:field="*{setItem.code}" placeholder="001234"
+							th:disabled="${editFlg}">
 					</div>
 					<div class="col-4">
 						<label for="setItemName" class="form-label" th:text="セット商品名"></label>
-						<input type="text" class="form-control" id="setItemName" th:value="${setItemName}"
-							placeholder="キリンセット">
+						<input type="text" class="form-control" th:field="*{setItem.name}" placeholder="キリンセット">
 					</div>
 					<div class="container mb-4 overflow-auto">
 						<table class="table">
 							<thead class="sticky-top">
 								<tr>
-									<th scope="col" class="text-center"></th>
-									<th scope="col" class="text-center">バラ商品コード</th>
-									<th scope="col" class="text-center">バラ商品名</th>
-									<th scope="col" class="text-center">数量</th>
-									<th scope="col" class="text-center">単価</th>
+									<th scope="col" class="text-center btn-th"></th>
+									<th scope="col" class="text-center code-th" th:text="バラ商品コード"></th>
+									<th scope="col" class="text-center name-th" th:text="バラ商品名"></th>
+									<th scope="col" class="text-center amount-th" th:text="数量"></th>
+									<th scope="col" class="text-center price-th" th:text="単価"></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="edit align-middle" th:each="result : ${resultList}">
-									<td class="text-center btn-width">
-										<button class="btn btn-light btn-sm" type="button" th:text="削除"></button>
+								<tr class="edit align-middle" th:each="baraItem, st : *{baraItemList}">
+									<td class="text-center">
+										<button class="btn btn-light btn-sm" type="button" name="deleteBtn"
+											th:text="削除"></button>
 									</td>
-									<td class=" code-width">
-										<input name="code" type="text" class="form-control" th:value="${result.code}" />
+									<td>
+										<input type="text" class="form-control"
+											th:field="*{baraItemList[__${st.index}__].code}" />
 									</td>
-									<td class="name-width">
-										<input name="name" type="text" class="form-control" th:value="${result.name}" />
+									<td>
+										<input type="text" class="form-control"
+											th:field="*{baraItemList[__${st.index}__].name}" />
 									</td>
-									<td class="amount-width">
-										<input name="amount" type="number" class="form-control"
-											th:value="${result.amount}" />
+									<td>
+										<input type="number" class="form-control"
+											th:field="*{baraItemList[__${st.index}__].amount}" />
 									</td>
-									<td class="price-width">
-										<input name="price" type="number" step="0.1" class="form-control"
-											th:value="${result.price}" />
+									<td>
+										<input type="number" step="0.1" class="form-control"
+											th:field="*{baraItemList[__${st.index}__].price}" />
 									</td>
 								</tr>
 							</tbody>
@@ -64,15 +66,14 @@
 					<div class="container">
 						<div class="row">
 							<div class="col-2">
-								<button type="button" class="btn btn-dark"
-									onclick="location.href='/setItem/master/detail'">明細追加</button>
+								<button type="button" class="btn btn-dark" onclick="add()" th:text="明細追加"></button>
 							</div>
 							<div class="col-2">
-								<button type="submit" class="btn btn-dark">確定</button>
+								<button type="submit" class="btn btn-dark" th:text="確定"></button>
 							</div>
 							<div class="col-2">
 								<button type="button" class="btn btn-dark"
-									onclick="location.href='/setItem/master/list'">戻る</button>
+									onclick="location.href='/setItem/master/list'" th:text="戻る"></button>
 							</div>
 						</div>
 					</div>
@@ -80,25 +81,102 @@
 			</div>
 		</div>
 	</main>
+	<script>
+		// 削除ボタン処理追加
+		let btns = document.querySelectorAll("button[name='deleteBtn']")
+		for (let i = 0; i < btns.length; i++) {
+			btns[i].addEventListener("click", deleteRow)
+		}
+
+		// 明細行を追加する
+		function add() {
+			let data = document.querySelector("tbody")
+
+			let num = data.children.length
+
+			const label = "baraItemList"
+
+			let newRow = document.createElement("tr")
+			newRow.className = "edit align-middle"
+
+			let tdButton = document.createElement("td")
+			tdButton.className = "text-center"
+			let newButton = document.createElement("button")
+			newButton.className = "btn btn-light btn-sm"
+			newButton.type = "button"
+			newButton.name = "deleteBtn"
+			newButton.innerHTML = "削除"
+			newButton.addEventListener("click", deleteRow)
+
+			tdButton.appendChild(newButton)
+			newRow.appendChild(tdButton)
+
+			let tdCode = document.createElement("td")
+			let newCode = document.createElement("input")
+			newCode.className = "form-control"
+			newCode.type = "text"
+			newCode.id = label + num + ".code"
+			newCode.name = label + "[" + num + "]" + ".code"
+
+			tdCode.appendChild(newCode)
+			newRow.appendChild(tdCode)
+
+			let tdName = document.createElement("td")
+			let newName = document.createElement("input")
+			newName.className = "form-control"
+			newName.type = "text"
+			newName.id = label + num + ".name"
+			newName.name = label + "[" + num + "]" + ".name"
+
+			tdName.appendChild(newName)
+			newRow.appendChild(tdName)
+
+			let tdAmount = document.createElement("td")
+			let newAmount = document.createElement("input")
+			newAmount.className = "form-control"
+			newAmount.type = "text"
+			newAmount.id = label + num + ".amount"
+			newAmount.name = label + "[" + num + "]" + ".amount"
+
+			tdAmount.appendChild(newAmount)
+			newRow.appendChild(tdAmount)
+
+			let tdPrice = document.createElement("td")
+			let newPrice = document.createElement("input")
+			newPrice.className = "form-control"
+			newPrice.type = "text"
+			newPrice.id = label + num + ".price"
+			newPrice.name = label + "[" + num + "]" + ".price"
+
+			tdPrice.appendChild(newPrice)
+			newRow.appendChild(tdPrice)
+			data.appendChild(newRow)
+		}
+
+		// 選択行を削除する
+		function deleteRow(e) {
+			e.srcElement.parentElement.parentElement.remove()
+
+		}	</script>
 	<style>
-		.btn-width {
+		.btn-th {
 			width: 80px;
 		}
 
-		.code-width {
+		.code-th {
 			width: 150px;
 		}
 
-		.name-width {
+		.name-th {
 			min-width: 200px;
 			width: auto;
 		}
 
-		.amount-width {
+		.amount-th {
 			width: 110px;
 		}
 
-		.price-width {
+		.price-th {
 			width: 130px;
 		}
 	</style>

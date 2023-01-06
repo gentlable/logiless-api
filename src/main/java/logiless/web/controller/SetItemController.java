@@ -1,15 +1,19 @@
 package logiless.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import logiless.web.model.dto.SetItem;
+import logiless.web.model.dto.BaraItem;
 import logiless.web.model.dto.Tenpo;
+import logiless.web.model.form.SetItemForm;
 import logiless.web.model.service.SetItemService;
 
 @Controller
@@ -40,25 +44,48 @@ public class SetItemController {
 		return "setItem/master/list";
 	}
 
+	/**
+	 * セット商品マスター詳細画面
+	 * 店舗コードとセット商品コードがパラムに含まれている場合、編集画面
+	 * @param model
+	 * @param setItemCode
+	 * @param tenpoCode
+	 * @return
+	 */
 	@GetMapping("/setItem/master/detail")
 	public String setItemMasterDetail(Model model,
 			@RequestParam(name = "setItemCode", required = false) String setItemCode,
-			@RequestParam(name = "tenpoCode", required = true) String tenpoCode) {
+			@RequestParam(name = "tenpoCode", required = false) String tenpoCode) {
 
-		List<Tenpo> storeList = setItemService.getAllTenpoList();
-		model.addAttribute("storeList", storeList);
+		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
+		model.addAttribute("tenpoList", tenpoList);
+		
+		SetItemForm setItemForm = new SetItemForm();
+		List<BaraItem> baraItemList = new ArrayList<BaraItem>();
+		baraItemList.add(new BaraItem());
+		setItemForm.setBaraItemList(baraItemList);
+		
+		boolean editFlg = false;
 
 		if (tenpoCode != null && setItemCode != null) {
-			
-			SetItem setItem = setItemService.getSetItemByCodeAndTenpoCode(setItemCode, tenpoCode);
-			
-			model.addAttribute("tenpoCode", tenpoCode);
-			model.addAttribute("setItemCode", setItemCode);
-			model.addAttribute("setItemName", setItem.getName());
-			model.addAttribute("resultList", setItemService.getBaraItemByTenpoCodeAndSetItemCode(tenpoCode, setItemCode));
+			setItemForm.setSetItem(setItemService.getSetItemByCodeAndTenpoCode(setItemCode, tenpoCode));
+			setItemForm.setBaraItemList(setItemService.getBaraItemByTenpoCodeAndSetItemCode(tenpoCode, setItemCode));
+			editFlg = true;
 		}
-
+		model.addAttribute("editFlg", editFlg);
+		model.addAttribute("tenpoCode", tenpoCode);
+		model.addAttribute("setItemForm", setItemForm);
+		
 		return "setItem/master/detail";
+	}
+	
+	@PostMapping("/setItem/master/submit")
+	public String setItemMasterSubmit(Model model,
+			@Param("setItemForm") SetItemForm setItemForm) {
+
+		model.addAttribute("message", "登録が完了しました");
+
+		return "setItem/master/list";
 	}
 
 	@GetMapping("/setItem/upload")

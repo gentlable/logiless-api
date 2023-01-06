@@ -34,17 +34,17 @@
 					</div>
 				</form>
 			</div>
-			<div class="container">
+			<div class="container mt-1">
 				<form>
 					<div class="container mb-4 overflow-auto" style="height:55vh;">
 						<table class="table">
 							<thead class="sticky-top">
 								<tr>
-									<th scope="col" class="text-center">削除</th>
-									<th scope="col" class="text-center">項番</th>
-									<th scope="col" class="text-center">店舗コード</th>
-									<th scope="col" class="text-center">セット商品コード</th>
-									<th scope="col" class="text-center">セット商品名</th>
+									<th scope="col" class="text-center delete-th">削除</th>
+									<th scope="col" class="text-center no-th">項番</th>
+									<th scope="col" class="text-center tenpo-th">店舗コード</th>
+									<th scope="col" class="text-center set-item-code-th">セット商品コード</th>
+									<th scope="col" class="text-center set-item-name-th">セット商品名</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -123,6 +123,22 @@
 			checkElements[i].onclick = check
 		}
 	</script>
+	<style>
+	.delete-th {
+		min-width: 50px;
+	}
+	.no-th {
+		min-width: 50px;
+	}
+	.tenpo-th {
+		min-width: 85px;
+	}
+	.set-item-code-th {
+		min-width: 120px;
+	}
+	.set-item-name-th {
+	}
+	</style>
 </body>
 
 </html>
