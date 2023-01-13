@@ -13,11 +13,17 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
+import logiless.common.model.dto.Juchu.JuchuCsv;
+import logiless.common.model.service.CsvConvertService;
+import logiless.common.model.service.FileOutputService;
 import logiless.web.config.SessionSample;
-import logiless.web.model.dto.LogilessResponse;
+import logiless.web.model.dto.LogilessResponseJuchu;
+import logiless.web.model.dto.LogilessResponseTenpo;
 import logiless.web.model.dto.OAuth2;
-import logiless.web.model.dto.Tenpo;
 import logiless.web.model.service.OAuth2Service;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +40,10 @@ public class LogilessController {
 	private MessageSource messageSource;
 	@Autowired
 	private OAuth2Service oauth2Service;
+	@Autowired
+	private CsvConvertService csvConvertService;
+	@Autowired
+	private FileOutputService fileOutputService;
 
 	@GetMapping("/")
 	public String index() {
@@ -48,7 +58,7 @@ public class LogilessController {
 	public String logiless() {
 		return "logiless/index";
 	}
-	
+
 	@GetMapping("/logiless/get")
 	public String logilessGet() {
 		String redirectUrl = oauth2Service.getUrl();
@@ -56,20 +66,30 @@ public class LogilessController {
 	}
 
 	@GetMapping("/logiless/getOAuth2")
-	public String logilessGetOAuth2(@RequestParam("code") String code,
-			Model model) {
+	public String logilessGetOAuth2(@RequestParam("code") String code, Model model) {
 
 		ResponseEntity<OAuth2> res = oauth2Service.getOAuth2(code);
-		model.addAttribute("status_code", res.getStatusCode());
-		model.addAttribute("access_token", res.getBody().getAccess_token());
-		model.addAttribute("refresh_token", res.getBody().getRefresh_token());
+		model.addAttribute("statusCode", res.getStatusCode());
 
-		sessionSample.setAccess_token(res.getBody().getAccess_token());
-		sessionSample.setRefresh_token(res.getBody().getRefresh_token());
+		sessionSample.setAccessToken(res.getBody().getAccessToken());
+		sessionSample.setRefreshToken(res.getBody().getRefreshToken());
 
 		return "logiless/getOAuth2";
 	}
-	
+
+	@GetMapping("/logiless/refresh")
+	public String logilessRefresh(Model model) {
+
+		if (!oauth2Service.refreshToken()) {
+			return "logiless/index";
+		}
+
+		sessionSample.setAccessToken(sessionSample.getAccessToken());
+		sessionSample.setRefreshToken(sessionSample.getRefreshToken());
+
+		return "logiless/getOAuth2";
+	}
+
 	@GetMapping("/logiless/get/tenpos/api")
 	public String logilessGetTenposApi(Model model, boolean... bs) {
 
@@ -78,31 +98,31 @@ public class LogilessController {
 		final String endpoint = "https://app2.logiless.com/api/v1/merchant/{merchant_id}/stores";
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Bearer " + sessionSample.getAccess_token());
+		headers.add("Authorization", "Bearer " + sessionSample.getAccessToken());
 		try {
 			// リクエスト情報の作成
 			RequestEntity<?> req = RequestEntity.get(endpoint, merchantId).headers(headers).build();
-			
+
 			ResponseEntity<String> res = rest.exchange(req, String.class);
 			String json = res.getBody();
-			
+
 			ObjectMapper mapper = new ObjectMapper();
 
-			//JSON⇒Javaオブジェクトに変換
-			LogilessResponse<Tenpo> data = mapper.readValue(json, LogilessResponse.class);
-			
+			// JSON⇒Javaオブジェクトに変換
+			LogilessResponseTenpo data = mapper.readValue(json, LogilessResponseTenpo.class);
+
 			model.addAttribute("tenpoList", data.getData());
 
 			return "master/tenpoList";
-		} catch (HttpClientErrorException e){
+		} catch (HttpClientErrorException e) {
 			e.printStackTrace();
-			
-			if(!oauth2Service.refreshToken()) {
+
+			if (!oauth2Service.refreshToken()) {
 				System.out.println("トークンリフレッシュに失敗しました。");
 				return "";
 			}
-			
-			if(!bs[0]) {
+
+			if (!bs[0]) {
 				return logilessGetTenposApi(model, true);
 			} else {
 				System.out.println("システムエラー");
@@ -110,45 +130,51 @@ public class LogilessController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			
+
 			return "";
 		}
 	}
-	
-	
+
 	@GetMapping("/logiless/api/get/salesOrders")
 	public String logilessApiGetSalesOrders(Model model, boolean... bs) {
 
 		RestTemplate rest = new RestTemplate();
 
-		final String endpoint = "https://app2.logiless.com/api/v1/merchant/{merchant_id}/sales_orders";
+		String endpoint = "https://app2.logiless.com/api/v1/merchant/{merchant_id}/sales_orders?limit=1&delivery_status=Shipped";
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Bearer " + sessionSample.getAccess_token());
+		headers.add("Authorization", "Bearer " + sessionSample.getAccessToken());
 		try {
 			// リクエスト情報の作成
 			RequestEntity<?> req = RequestEntity.get(endpoint, merchantId).headers(headers).build();
-			
+
 			ResponseEntity<String> res = rest.exchange(req, String.class);
 			String json = res.getBody();
-			
-			ObjectMapper mapper = new ObjectMapper();
 
-			//JSON⇒Javaオブジェクトに変換
-			LogilessResponse<Tenpo> data = mapper.readValue(json, LogilessResponse.class);
-			
-			model.addAttribute("tenpoList", data.getData());
+			ObjectMapper objectMapper = new ObjectMapper();
 
-			return "master/tenpoList";
-		} catch (HttpClientErrorException e){
+			// JSON⇒Javaオブジェクトに変換
+			LogilessResponseJuchu response = objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+					.readValue(json, LogilessResponseJuchu.class);
+
+			CsvMapper csvMapper = new CsvMapper();
+			CsvSchema schema = csvMapper.schemaFor(JuchuCsv.class).withHeader();
+			fileOutputService.output("demo",
+					csvMapper.writer(schema).writeValueAsString(csvConvertService.juchuCsvConvert(response.getData())));
+
+			model.addAttribute("e", "成功した");
+			model.addAttribute("data", response.getData());
+
+			return "logiless/index";
+		} catch (HttpClientErrorException e) {
 			e.printStackTrace();
-			
-			if(!oauth2Service.refreshToken()) {
+
+			if (!oauth2Service.refreshToken()) {
 				System.out.println("トークンリフレッシュに失敗しました。");
 				return "";
 			}
-			
-			if(!bs[0]) {
+
+			if (!bs[0]) {
 				return logilessGetTenposApi(model, true);
 			} else {
 				System.out.println("システムエラー");
@@ -156,8 +182,8 @@ public class LogilessController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			
-			return "";
+			model.addAttribute("e", e);
+			return "logiless/index";
 		}
 	}
 }

@@ -18,13 +18,26 @@
 						<button class="btn btn-light btn-lg" onclick="location.href='/logiless/get'"
 							th:text="ロジレス連携承認画面へ"></button>
 					</div>
+					<div class="col">
+						<button class="btn btn-light btn-lg" onclick="location.href='/logiless/refresh'"
+							th:text="リフレッシュ"></button>
+					</div>
 				</div>
 				<div class="row mb-4">
 					<div class="col">
 						<button class="btn btn-light btn-lg" onclick="location.href='/logiless/get/tenpos/api'"
 							th:text="店舗情報取得"></button>
 					</div>
+					<div class="col">
+						<button class="btn btn-light btn-lg" onclick="location.href='/logiless/api/get/salesOrders'"
+							th:text="受注情報取得"></button>
+					</div>
 				</div>
+			</div>
+			<div>
+				<p style="color:red" th:text="'エラー：　'+${e}"></p>
+				<p th:text="'リフレッシュトークン：　'+${@sessionSample.refreshToken}"></p>
+				<p th:text="'受注：　'+${data}"></p>
 			</div>
 		</div>
 	</main>

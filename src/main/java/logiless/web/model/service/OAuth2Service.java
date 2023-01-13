@@ -70,7 +70,7 @@ public class OAuth2Service {
 		final String endpoint = "https://app2.logiless.com/oauth2/token?client_id={client_id}&client_secret={client_secret}&refresh_token={refresh_token}&grant_type={grant_type}";
 		String clientId = oauth2Properties.getClientId();
 		String clientSecret = oauth2Properties.getClientSecret();
-		String refreshToken = sessionSample.getRefresh_token();
+		String refreshToken = sessionSample.getRefreshToken();
 		String grantType = "refresh_token";
 
 		if (refreshToken == null) {
@@ -84,8 +84,8 @@ public class OAuth2Service {
 			RequestEntity<?> req = RequestEntity.get(endpoint, clientId, clientSecret, refreshToken, grantType).build();
 			ResponseEntity<OAuth2> res = rest.exchange(req, OAuth2.class);
 
-			sessionSample.setAccess_token(res.getBody().getAccess_token());
-			sessionSample.setRefresh_token(res.getBody().getRefresh_token());
+			sessionSample.setAccessToken(res.getBody().getAccessToken());
+			sessionSample.setRefreshToken(res.getBody().getRefreshToken());
 
 		} catch (Exception e) {
 			e.printStackTrace();
