@@ -3,16 +3,26 @@ package logiless.common.model.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import logiless.common.model.dto.Juchu.JuchuCsv;
 import logiless.common.model.dto.Juchu.JuchuDenpyo;
 import logiless.common.model.dto.Juchu.JuchuMesi;
 import logiless.common.model.dto.Sykka.SykkaDenpyo;
+import logiless.web.model.dto.BaraItem;
+import logiless.web.model.service.SetItemService;
 
 @Service
-public class CsvConvertService {
+public class JuchuCsvConvertService {
 
+	/**
+	 * JuchuDenpyoリストをJuchuCsvリストに変換する
+	 * 
+	 * @param data
+	 * @return
+	 */
 	public List<JuchuCsv> juchuCsvConvert(List<JuchuDenpyo> data) {
 
 		List<JuchuCsv> list = new ArrayList<>();
@@ -20,7 +30,7 @@ public class CsvConvertService {
 		for (JuchuDenpyo juchuDenpyo : data) {
 			for (JuchuMesi line : juchuDenpyo.getLines()) {
 				JuchuCsv juchuCsv = new JuchuCsv();
-				
+
 				// TODO 一つ目で大丈夫？
 				SykkaDenpyo sykkaDenpyo = juchuDenpyo.getOutboundDeliveries().get(0);
 
@@ -81,9 +91,9 @@ public class CsvConvertService {
 				juchuCsv.setNoshiSitei(juchuDenpyo.getNoshi());
 				juchuCsv.setWrappingSitei(juchuDenpyo.getWrapping());
 				juchuCsv.setSykkaTuti(juchuDenpyo.getShippingConfirmed());
-				juchuCsv.setJuchuDate(juchuDenpyo.getOrderedAt()); // TODO
-				juchuCsv.setNyukinDate("不明"); // TODO
-				juchuCsv.setKanryoDate(juchuDenpyo.getFinishedAt()); // TODO
+				juchuCsv.setJuchuDate(juchuDenpyo.getOrderedAt());
+				juchuCsv.setNyukinDate(""); // TODO
+				juchuCsv.setKanryoDate(juchuDenpyo.getFinishedAt());
 				juchuCsv.setJuchuMesiCd(line.getCode());
 				juchuCsv.setJuchuMesiStatus(line.getStatus());
 				juchuCsv.setSyohnCd(line.getArticleCode());
@@ -94,16 +104,24 @@ public class CsvConvertService {
 				juchuCsv.setZeiRitu(line.getTaxRate());
 				juchuCsv.setSu(line.getQuantity());
 				juchuCsv.setSyokei(line.getSubtotal());
-				juchuCsv.setHikiateMatiSu(line.getCachedAllocatedQuantity());
-				juchuCsv.setHikiateZumiSu(line.getCachedAllocatedQuantity());
+				if("1".equals(line.getIsParent())) {
+					juchuCsv.setHikiateMatiSu(line.getCachedAllocatedQuantity());
+				} else {
+					juchuCsv.setHikiateMatiSu("0");
+				}
+				if(!"0".equals(line.getIsChild())) {
+					juchuCsv.setHikiateZumiSu(line.getCachedAllocatedQuantity());
+				} else {
+					juchuCsv.setHikiateZumiSu("0");
+				}
 				juchuCsv.setOyaMesi(line.getIsParent());
 				juchuCsv.setKoMesi(line.getIsChild());
-				juchuCsv.setSoukoId(sykkaDenpyo.getWarehouse()); // TODO
+				juchuCsv.setSoukoId(sykkaDenpyo.getWarehouse());
 				juchuCsv.setTenpoId(juchuDenpyo.getStore().getCode());
 				juchuCsv.setTenpoNm(juchuDenpyo.getStore().getName());
-				juchuCsv.setTenpoCd(juchuDenpyo.getStore().getCode()); // TODO
-				juchuCsv.setPlatform("汎用");
-				juchuCsv.setLogilessCd(juchuDenpyo.getId()); // TODO
+				juchuCsv.setTenpoCd(juchuDenpyo.getStore().getCode());
+				juchuCsv.setPlatform("汎用"); // TODO
+				juchuCsv.setLogilessCd(line.getArticle().getCode());
 				juchuCsv.setFree1(juchuDenpyo.getAttr1());
 				juchuCsv.setFree2(juchuDenpyo.getAttr2());
 				juchuCsv.setFree3(juchuDenpyo.getAttr3());
@@ -114,21 +132,93 @@ public class CsvConvertService {
 				juchuCsv.setFree8(juchuDenpyo.getAttr8());
 				juchuCsv.setFree9(juchuDenpyo.getAttr9());
 				juchuCsv.setFree10(juchuDenpyo.getAttr10());
-				juchuCsv.setSykkaDenHaisoTuisekiNoList(
-						sykkaDenpyo.getDeliveryTrackingNumbers().get(0));
+				juchuCsv.setSykkaDenHaisoTuisekiNoList(sykkaDenpyo.getDeliveryTrackingNumbers().get(0));
 				juchuCsv.setSykkaDenHaisoHoho(sykkaDenpyo.getDeliveryMethod());
 				juchuCsv.setSykkaDenHaisoStatus(sykkaDenpyo.getDeliveryStatus());
 				juchuCsv.setSykkaDenDenpyoStatus(sykkaDenpyo.getDocumentStatus());
 				juchuCsv.setSykkaDenTdkKiboDate(sykkaDenpyo.getDeliveryPreferredDate());
 				juchuCsv.setSykkaDenTdkKiboJikantai(sykkaDenpyo.getDeliveryPreferredTimeZone());
-				juchuCsv.setTnk("");
-				juchuCsv.setOyaSyohnCd("");
+				juchuCsv.setTnk(line.getTnk());
+				juchuCsv.setOyaSyohnCd(line.getOyasyohnCd());
+				
 				list.add(juchuCsv);
 			}
 
 		}
 
 		return list;
+	}
+
+	@Autowired
+	SetItemService setItemService;
+
+	/**
+	 * 受注伝票データのバラ商品について単価を付与
+	 * 
+	 * @param juchuDenpyo
+	 * @return
+	 */
+	public JuchuDenpyo AddBaraItem(JuchuDenpyo juchuDenpyo) {
+
+		List<JuchuMesi> juchuMesiList = juchuDenpyo.getLines();
+		List<JuchuMesi> newJuchuMesiList = new ArrayList<>();
+
+		for (JuchuMesi juchuMesi : juchuMesiList) {
+
+			if (!juchuMesi.getIsParent().equals("1")) {
+				continue;
+			}
+
+			String tenpoCd = juchuDenpyo.getStore().getCode();
+			String oyaSyohnCd = juchuMesi.getArticleCode();
+
+			List<BaraItem> baraItemList = setItemService.getBaraItemByTenpoCodeAndSetItemCode(tenpoCd, oyaSyohnCd);
+
+			for (BaraItem baraItem : baraItemList) {
+
+				boolean existFlg = false;
+
+				for (JuchuMesi rec : juchuMesiList) {
+
+					if (rec.getArticleCode().equals(baraItem.getCode())
+							&& rec.getQuantity().equals(rec.getQuantity())) {
+
+						JuchuMesi newRec = new JuchuMesi();
+
+						BeanUtils.copyProperties(rec, newRec);
+
+						newRec.setIsChild("9");
+						newRec.setTnk(baraItem.getPrice() + "");
+						newRec.setOyasyohnCd(baraItem.getSetItemCode());
+
+						newJuchuMesiList.add(newRec);
+
+						existFlg = true;
+
+						break;
+					}
+				}
+
+				if (!existFlg) {
+					JuchuMesi newRec = new JuchuMesi();
+					BeanUtils.copyProperties(juchuMesi, newRec);
+
+					newRec.setArticleCode(baraItem.getCode());
+					newRec.setArticleName(baraItem.getName());
+					newRec.setQuantity(baraItem.getQuantity() + "");
+					newRec.setIsParent("0");
+					newRec.setIsChild("9");
+					newRec.setTnk(baraItem.getPrice() + "");
+					newRec.setOyasyohnCd(baraItem.getSetItemCode());
+
+					newJuchuMesiList.add(newRec);
+				}
+			}
+		}
+		juchuMesiList.addAll(newJuchuMesiList);
+		juchuDenpyo.setLines(juchuMesiList);
+
+		return juchuDenpyo;
 	}
 
 }

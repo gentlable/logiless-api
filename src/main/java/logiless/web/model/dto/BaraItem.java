@@ -28,7 +28,7 @@ public class BaraItem {
 
 	@NotNull
 	@PositiveOrZero
-	private int amount;
+	private int quantity;
 
 	@NotNull
 	@PositiveOrZero

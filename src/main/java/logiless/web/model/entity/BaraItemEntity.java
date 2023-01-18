@@ -22,7 +22,7 @@ public class BaraItemEntity {
 	
 	private String setItemCode;
 	
-	private int amount;
+	private int quantity;
 	
 	private int price;
 

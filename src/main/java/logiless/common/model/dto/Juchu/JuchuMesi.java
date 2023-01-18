@@ -31,4 +31,9 @@ public class JuchuMesi {
 	private String updatedAt;
 	private Article article;
 	private JuchuOrigin origin;
+	
+	// CSV出力用
+	private String tnk;
+	private String oyasyohnCd;
+	
 }

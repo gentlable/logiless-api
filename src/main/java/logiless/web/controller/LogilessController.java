@@ -1,5 +1,8 @@
 package logiless.web.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -18,8 +21,9 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import logiless.common.model.dto.Juchu.JuchuCsv;
-import logiless.common.model.service.CsvConvertService;
+import logiless.common.model.dto.Juchu.JuchuDenpyo;
 import logiless.common.model.service.FileOutputService;
+import logiless.common.model.service.JuchuCsvConvertService;
 import logiless.web.config.SessionSample;
 import logiless.web.model.dto.LogilessResponseJuchu;
 import logiless.web.model.dto.LogilessResponseTenpo;
@@ -41,16 +45,18 @@ public class LogilessController {
 	@Autowired
 	private OAuth2Service oauth2Service;
 	@Autowired
-	private CsvConvertService csvConvertService;
+	private JuchuCsvConvertService juchuCsvConvertService;
 	@Autowired
 	private FileOutputService fileOutputService;
 
 	@GetMapping("/")
-	public String index() {
+	public String index(Model model) {
 		// リソースからメッセージを取得する参考
 //		System.out.println(messageSource.getMessage("hello", new String[]{}, Locale.getDefault()));
 
 		// Spring Boot では、デフォルトのログレベルにINFOが設定されているため、TRACEとDEBUGは出力されません。
+		
+		model.addAttribute("code", "1");
 		return "index";
 	}
 
@@ -140,8 +146,9 @@ public class LogilessController {
 
 		RestTemplate rest = new RestTemplate();
 
-		String endpoint = "https://app2.logiless.com/api/v1/merchant/{merchant_id}/sales_orders?limit=1&delivery_status=Shipped";
-
+		String endpoint = "https://app2.logiless.com/api/v1/merchant/{merchant_id}/sales_orders?limit=1";
+		endpoint+="&delivery_status=Shipped";
+		endpoint+="&code=377040-20230116-0863132011";
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer " + sessionSample.getAccessToken());
 		try {
@@ -159,11 +166,22 @@ public class LogilessController {
 
 			CsvMapper csvMapper = new CsvMapper();
 			CsvSchema schema = csvMapper.schemaFor(JuchuCsv.class).withHeader();
-			fileOutputService.output("demo",
-					csvMapper.writer(schema).writeValueAsString(csvConvertService.juchuCsvConvert(response.getData())));
+			fileOutputService.output("demo", csvMapper.writer(schema)
+					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(response.getData())));
+
+			List<JuchuDenpyo> juchuDenpyoList = new ArrayList<>();
+
+			for (JuchuDenpyo juchuDenpyo : response.getData()) {
+
+				juchuDenpyoList.add(juchuCsvConvertService.AddBaraItem(juchuDenpyo));
+
+			}
+			fileOutputService.output("demo-edited", csvMapper.writer(schema)
+					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(juchuDenpyoList)));
 
 			model.addAttribute("e", "成功した");
-			model.addAttribute("data", response.getData());
+//			model.addAttribute("data", response.getData());
+			model.addAttribute("data", json);
 
 			return "logiless/index";
 		} catch (HttpClientErrorException e) {
