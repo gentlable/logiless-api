@@ -1,4 +1,4 @@
-package logiless.common.model.dto.Syohn;
+package logiless.common.model.dto.syohn;
 
 import lombok.Getter;
 import lombok.Setter;

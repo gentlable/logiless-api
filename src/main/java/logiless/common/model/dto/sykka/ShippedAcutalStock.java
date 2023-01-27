@@ -1,4 +1,4 @@
-package logiless.common.model.dto.Sykka;
+package logiless.common.model.dto.sykka;
 
 import lombok.Getter;
 import lombok.Setter;

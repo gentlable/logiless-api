@@ -1,6 +1,6 @@
-package logiless.common.model.dto.Juchu;
+package logiless.common.model.dto.juchu;
 
-import logiless.common.model.dto.Syohn.Article;
+import logiless.common.model.dto.syohn.Article;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -34,6 +34,6 @@ public class JuchuMesi {
 	
 	// CSV出力用
 	private String tnk;
-	private String oyasyohnCd;
+	private String oyaSyohnCd;
 	
 }

@@ -7,10 +7,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import logiless.common.model.dto.Juchu.JuchuCsv;
-import logiless.common.model.dto.Juchu.JuchuDenpyo;
-import logiless.common.model.dto.Juchu.JuchuMesi;
-import logiless.common.model.dto.Sykka.SykkaDenpyo;
+import logiless.common.model.dto.juchu.JuchuCsv;
+import logiless.common.model.dto.juchu.JuchuDenpyo;
+import logiless.common.model.dto.juchu.JuchuMesi;
+import logiless.common.model.dto.sykka.SykkaDenpyo;
 import logiless.web.model.dto.BaraItem;
 import logiless.web.model.service.SetItemService;
 
@@ -29,9 +29,13 @@ public class JuchuCsvConvertService {
 
 		for (JuchuDenpyo juchuDenpyo : data) {
 			for (JuchuMesi line : juchuDenpyo.getLines()) {
+
+				if (!"Shipped".equals(line.getStatus())) {
+					continue;
+				}
+
 				JuchuCsv juchuCsv = new JuchuCsv();
 
-				// TODO 一つ目で大丈夫？
 				SykkaDenpyo sykkaDenpyo = juchuDenpyo.getOutboundDeliveries().get(0);
 
 				juchuCsv.setJuchuCd(juchuDenpyo.getCode());
@@ -92,7 +96,7 @@ public class JuchuCsvConvertService {
 				juchuCsv.setWrappingSitei(juchuDenpyo.getWrapping());
 				juchuCsv.setSykkaTuti(juchuDenpyo.getShippingConfirmed());
 				juchuCsv.setJuchuDate(juchuDenpyo.getOrderedAt());
-				juchuCsv.setNyukinDate(""); // TODO
+				juchuCsv.setNyukinDate(""); // TODO （使わないようなので空でいいかも）
 				juchuCsv.setKanryoDate(juchuDenpyo.getFinishedAt());
 				juchuCsv.setJuchuMesiCd(line.getCode());
 				juchuCsv.setJuchuMesiStatus(line.getStatus());
@@ -104,14 +108,11 @@ public class JuchuCsvConvertService {
 				juchuCsv.setZeiRitu(line.getTaxRate());
 				juchuCsv.setSu(line.getQuantity());
 				juchuCsv.setSyokei(line.getSubtotal());
-				if("1".equals(line.getIsParent())) {
-					juchuCsv.setHikiateMatiSu(line.getCachedAllocatedQuantity());
-				} else {
+				if ("0".equals(line.getIsParent())) {
 					juchuCsv.setHikiateMatiSu("0");
-				}
-				if(!"0".equals(line.getIsChild())) {
 					juchuCsv.setHikiateZumiSu(line.getCachedAllocatedQuantity());
 				} else {
+					juchuCsv.setHikiateMatiSu(line.getQuantity());
 					juchuCsv.setHikiateZumiSu("0");
 				}
 				juchuCsv.setOyaMesi(line.getIsParent());
@@ -119,9 +120,9 @@ public class JuchuCsvConvertService {
 				juchuCsv.setSoukoId(sykkaDenpyo.getWarehouse());
 				juchuCsv.setTenpoId(juchuDenpyo.getStore().getCode());
 				juchuCsv.setTenpoNm(juchuDenpyo.getStore().getName());
-				juchuCsv.setTenpoCd(juchuDenpyo.getStore().getCode());
-				juchuCsv.setPlatform("汎用"); // TODO
-				juchuCsv.setLogilessCd(line.getArticle().getCode());
+				juchuCsv.setTenpoCd("");// TODO(利用していなさそうなので) 今後のこと考えるのであれば、店舗コードとプラットフォームは必要、でも二重管理になるのめちゃいやだな
+				juchuCsv.setPlatform("汎用"); // TODO(オールアバウトだけなので汎用) 今後のこと考えるのであれば、店舗コードとプラットフォームは必要、でも二重管理になるのめちゃいやだな
+				juchuCsv.setLogilessCd(line.getArticle().getObjectCode());
 				juchuCsv.setFree1(juchuDenpyo.getAttr1());
 				juchuCsv.setFree2(juchuDenpyo.getAttr2());
 				juchuCsv.setFree3(juchuDenpyo.getAttr3());
@@ -139,8 +140,8 @@ public class JuchuCsvConvertService {
 				juchuCsv.setSykkaDenTdkKiboDate(sykkaDenpyo.getDeliveryPreferredDate());
 				juchuCsv.setSykkaDenTdkKiboJikantai(sykkaDenpyo.getDeliveryPreferredTimeZone());
 				juchuCsv.setTnk(line.getTnk());
-				juchuCsv.setOyaSyohnCd(line.getOyasyohnCd());
-				
+				juchuCsv.setOyaSyohnCd(line.getOyaSyohnCd());
+
 				list.add(juchuCsv);
 			}
 
@@ -189,7 +190,7 @@ public class JuchuCsvConvertService {
 
 						newRec.setIsChild("9");
 						newRec.setTnk(baraItem.getPrice() + "");
-						newRec.setOyasyohnCd(baraItem.getSetItemCode());
+						newRec.setOyaSyohnCd(baraItem.getSetItemCode());
 
 						newJuchuMesiList.add(newRec);
 
@@ -209,7 +210,7 @@ public class JuchuCsvConvertService {
 					newRec.setIsParent("0");
 					newRec.setIsChild("9");
 					newRec.setTnk(baraItem.getPrice() + "");
-					newRec.setOyasyohnCd(baraItem.getSetItemCode());
+					newRec.setOyaSyohnCd(baraItem.getSetItemCode());
 
 					newJuchuMesiList.add(newRec);
 				}

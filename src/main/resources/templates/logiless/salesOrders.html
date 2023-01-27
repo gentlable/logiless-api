@@ -1,0 +1,26 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment">
+</head>
+
+<body>
+	<div th:replace="common/header :: header_fragment(title=#{text.setItemMaster})"></div>
+	<main>
+		<div class="container">
+			<div class="container">
+				<form action="#" th:action="@{/logiless/api/get/salesOrders}" class="row g-3" method="get">
+					<div class="col-4">
+						<label for="setItemCode" class="form-label" th:text="セット商品ＣＤ"></label>
+						<input type="date" class="form-control" value="2023-01-23" name="syoriDt">
+					</div>
+					<div>
+						<button type="submit" class="btn btn-light btn-lg" th:text="取得"></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+</body>
+
+</html>

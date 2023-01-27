@@ -1,4 +1,4 @@
-package logiless.common.model.dto.Juchu;
+package logiless.common.model.dto.juchu;
 
 import lombok.Getter;
 import lombok.Setter;

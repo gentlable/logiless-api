@@ -1,8 +1,5 @@
 package logiless.web.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -16,16 +13,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
-import logiless.common.model.dto.Juchu.JuchuCsv;
-import logiless.common.model.dto.Juchu.JuchuDenpyo;
-import logiless.common.model.service.FileOutputService;
-import logiless.common.model.service.JuchuCsvConvertService;
+import logiless.common.model.service.LogilessApiService;
 import logiless.web.config.SessionSample;
-import logiless.web.model.dto.LogilessResponseJuchu;
 import logiless.web.model.dto.LogilessResponseTenpo;
 import logiless.web.model.dto.OAuth2;
 import logiless.web.model.service.OAuth2Service;
@@ -36,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LogilessController {
 
 	private static final String merchantId = "1022";
+	private static final String FINISH_TIME = "00:00:00";
 
 	@Autowired
 	protected SessionSample sessionSample;
@@ -43,11 +34,9 @@ public class LogilessController {
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
+	private LogilessApiService logilessApiService;
+	@Autowired
 	private OAuth2Service oauth2Service;
-	@Autowired
-	private JuchuCsvConvertService juchuCsvConvertService;
-	@Autowired
-	private FileOutputService fileOutputService;
 
 	@GetMapping("/")
 	public String index(Model model) {
@@ -55,7 +44,7 @@ public class LogilessController {
 //		System.out.println(messageSource.getMessage("hello", new String[]{}, Locale.getDefault()));
 
 		// Spring Boot では、デフォルトのログレベルにINFOが設定されているため、TRACEとDEBUGは出力されません。
-		
+
 		model.addAttribute("code", "1");
 		return "index";
 	}
@@ -141,67 +130,22 @@ public class LogilessController {
 		}
 	}
 
+	@GetMapping("/logiless/salesOrders")
+	public String logilessSalesOrders(Model model) {
+
+		return "logiless/salesOrders";
+	}
+
 	@GetMapping("/logiless/api/get/salesOrders")
-	public String logilessApiGetSalesOrders(Model model, boolean... bs) {
+	public String logilessApiGetSalesOrders(Model model, @RequestParam("syoriDt") String syoriDt, boolean... bs) {
 
-		RestTemplate rest = new RestTemplate();
+		boolean res = logilessApiService.getJuchu(syoriDt, "3901");
 
-		String endpoint = "https://app2.logiless.com/api/v1/merchant/{merchant_id}/sales_orders?limit=1";
-		endpoint+="&delivery_status=Shipped";
-		endpoint+="&code=377040-20230116-0863132011";
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Bearer " + sessionSample.getAccessToken());
-		try {
-			// リクエスト情報の作成
-			RequestEntity<?> req = RequestEntity.get(endpoint, merchantId).headers(headers).build();
-
-			ResponseEntity<String> res = rest.exchange(req, String.class);
-			String json = res.getBody();
-
-			ObjectMapper objectMapper = new ObjectMapper();
-
-			// JSON⇒Javaオブジェクトに変換
-			LogilessResponseJuchu response = objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-					.readValue(json, LogilessResponseJuchu.class);
-
-			CsvMapper csvMapper = new CsvMapper();
-			CsvSchema schema = csvMapper.schemaFor(JuchuCsv.class).withHeader();
-			fileOutputService.output("demo", csvMapper.writer(schema)
-					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(response.getData())));
-
-			List<JuchuDenpyo> juchuDenpyoList = new ArrayList<>();
-
-			for (JuchuDenpyo juchuDenpyo : response.getData()) {
-
-				juchuDenpyoList.add(juchuCsvConvertService.AddBaraItem(juchuDenpyo));
-
-			}
-			fileOutputService.output("demo-edited", csvMapper.writer(schema)
-					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(juchuDenpyoList)));
-
-			model.addAttribute("e", "成功した");
-//			model.addAttribute("data", response.getData());
-			model.addAttribute("data", json);
-
-			return "logiless/index";
-		} catch (HttpClientErrorException e) {
-			e.printStackTrace();
-
-			if (!oauth2Service.refreshToken()) {
-				System.out.println("トークンリフレッシュに失敗しました。");
-				return "";
-			}
-
-			if (!bs[0]) {
-				return logilessGetTenposApi(model, true);
-			} else {
-				System.out.println("システムエラー");
-				return "";
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			model.addAttribute("e", e);
+		if (!res) {
+			model.addAttribute("e", "エラー");
 			return "logiless/index";
 		}
+		model.addAttribute("e", "成功した");
+		return "logiless/index";
 	}
 }

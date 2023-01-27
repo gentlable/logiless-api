@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import logiless.common.model.dto.Juchu.JuchuDenpyo;
+import logiless.common.model.dto.juchu.JuchuDenpyo;
 import lombok.Getter;
 import lombok.Setter;
 

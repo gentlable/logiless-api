@@ -34,4 +34,5 @@ build/
 
 ### 
 application.yml
-/upload-dir/*
+upload-dir/
+output/

@@ -1,14 +1,15 @@
-<header xmlns:th="http://www.thymeleaf.org" th:fragment="header_fragment(title)"
-	class="p-2 bg-dark text-white">
+<header xmlns:th="http://www.thymeleaf.org" th:fragment="header_fragment(title)" class="p-2 bg-dark text-white">
 	<div class="container">
 		<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-			<a th:text="#{text.logilessAPI}" href="/" class="d-flex align-items-center mb-0 me-3 text-white text-decoration-none">
+			<a th:text="#{text.logilessAPI}" href="/"
+				class="d-flex align-items-center mb-0 me-3 text-white text-decoration-none">
 			</a>
-			<p th:text="${title}" class="me-auto align-items-center text-white text-decoration-none mb-0">test</p>
+			<p th:text="${title}" class="me-auto align-items-center text-white text-decoration-none mb-0"></p>
 
 			<div class="text-end">
 				<span class="navbar-text me-3" th:text="${@sessionSample.username}"></span>
-				<button type="button" class="btn btn-outline-light me-2" th:text=#{text.logout}></button>
+				<button type="submit" formmethod="get" class="btn btn-outline-light me-2"
+					th:text=#{text.logout} onclick="location.href='/login'"></button>
 			</div>
 		</div>
 	</div>

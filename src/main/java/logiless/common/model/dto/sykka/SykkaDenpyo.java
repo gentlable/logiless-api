@@ -1,9 +1,9 @@
-package logiless.common.model.dto.Sykka;
+package logiless.common.model.dto.sykka;
 
 import java.util.List;
 
-import logiless.common.model.dto.Juchu.JuchuDenpyo;
-import logiless.common.model.dto.Juchu.JuchuMesi;
+import logiless.common.model.dto.juchu.JuchuDenpyo;
+import logiless.common.model.dto.juchu.JuchuMesi;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
