@@ -3,12 +3,11 @@ package logiless.common.model.dto.juchu;
 import logiless.common.model.dto.syohn.Article;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 public class JuchuMesi {
+
 	private String id;
 	private String code;
 	private String status;
@@ -31,9 +30,9 @@ public class JuchuMesi {
 	private String updatedAt;
 	private Article article;
 	private JuchuOrigin origin;
-	
+
 	// CSV出力用
 	private String tnk;
 	private String oyaSyohnCd;
-	
+
 }

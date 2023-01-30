@@ -14,15 +14,17 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.dataformat.csv.CsvGenerator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
+import logiless.common.model.dto.common.LogilessResponse;
 import logiless.common.model.dto.juchu.JuchuCsv;
 import logiless.common.model.dto.juchu.JuchuDenpyo;
 import logiless.web.config.SessionSample;
-import logiless.web.model.dto.LogilessResponseJuchu;
 import logiless.web.model.service.OAuth2Service;
 
 @Service
@@ -59,12 +61,11 @@ public class LogilessApiService {
 		String endpoint = API_ENDPOINT + "/sales_orders?limit=100";
 		endpoint += "&page={page}"; // ステータス出荷済み
 		endpoint += "&document_status={document_status}"; // ステータス出荷済み
-		endpoint += "&finished_at_from={finished_at_from}"; // 注文日時from
-		endpoint += "&finished_at_to={finished_at_to}"; // 注文日時from
+		endpoint += "&finished_at_from={finished_at_from}"; // 出荷完了日時from
+		endpoint += "&finished_at_to={finished_at_to}"; // 出荷完了日時from
 		endpoint += "&store={store}";
 		date.format(f);
 
-		String merchantId = "1022";
 		String documentStatus = "Shipped";
 		String finishedAtFrom = date.format(f) + " " + FINISH_TIME;
 		String finishedAtTo = date.plusDays(1).format(f) + " " + FINISH_TIME;
@@ -91,9 +92,14 @@ public class LogilessApiService {
 
 				ObjectMapper objectMapper = new ObjectMapper();
 
-				// JSON⇒Javaオブジェクトに変換
-				List<JuchuDenpyo> data = objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-						.readValue(json, LogilessResponseJuchu.class).getData();
+				LogilessResponse<JuchuDenpyo> response = objectMapper
+						.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+						.readValue(json, new TypeReference<LogilessResponse<JuchuDenpyo>>() {
+						});
+
+				// TODO ステータスコードでエラーハンドリングしないといけない
+
+				List<JuchuDenpyo> data = response.getData();
 
 				juchuDenpyoList.addAll(data);
 
@@ -104,9 +110,10 @@ public class LogilessApiService {
 			}
 
 			CsvMapper csvMapper = new CsvMapper();
+			csvMapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true);
 			CsvSchema schema = csvMapper.schemaFor(JuchuCsv.class).withHeader();
-			fileOutputService.output("demo", csvMapper.writer(schema)
-					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(juchuDenpyoList)));
+//			fileOutputService.output("demo", csvMapper.writer(schema)
+//					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(juchuDenpyoList)));
 
 			List<JuchuDenpyo> newJuchuDenpyoList = new ArrayList<>();
 
@@ -117,6 +124,9 @@ public class LogilessApiService {
 			}
 			fileOutputService.output("demo-edited", csvMapper.writer(schema)
 					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(newJuchuDenpyoList)));
+//
+//			fileOutputService.outputUTF("demo-edited-utf-8", csvMapper.writer(schema)
+//					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(newJuchuDenpyoList)));
 
 		} catch (HttpClientErrorException e) {
 

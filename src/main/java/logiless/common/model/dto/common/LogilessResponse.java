@@ -1,24 +1,23 @@
-package logiless.web.model.dto;
+package logiless.common.model.dto.common;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import logiless.common.model.dto.juchu.JuchuDenpyo;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class LogilessResponseJuchu {
-	
-	private List<JuchuDenpyo> data;
-	
+public class LogilessResponse<T> {
+
+	private List<T> data;
+
 	@JsonProperty("current_page")
 	private int currentPage;
-	
+
 	private int limit;
-	
+
 	@JsonProperty("total_count")
 	private int totalCount;
 

@@ -1,4 +1,4 @@
-package logiless.common.model.dto.entity;
+package logiless.common.model.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

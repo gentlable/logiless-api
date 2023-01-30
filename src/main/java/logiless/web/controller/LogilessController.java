@@ -12,12 +12,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
+import logiless.common.model.dto.common.LogilessResponse;
 import logiless.common.model.service.LogilessApiService;
 import logiless.web.config.SessionSample;
-import logiless.web.model.dto.LogilessResponseTenpo;
 import logiless.web.model.dto.OAuth2;
+import logiless.web.model.dto.Tenpo;
 import logiless.web.model.service.OAuth2Service;
 import lombok.extern.slf4j.Slf4j;
 
@@ -103,10 +106,11 @@ public class LogilessController {
 
 			ObjectMapper mapper = new ObjectMapper();
 
-			// JSON⇒Javaオブジェクトに変換
-			LogilessResponseTenpo data = mapper.readValue(json, LogilessResponseTenpo.class);
+			LogilessResponse<Tenpo> response = mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+					.readValue(json, new TypeReference<LogilessResponse<Tenpo>>() {
+					});
 
-			model.addAttribute("tenpoList", data.getData());
+			model.addAttribute("tenpoList", response.getData());
 
 			return "master/tenpoList";
 		} catch (HttpClientErrorException e) {

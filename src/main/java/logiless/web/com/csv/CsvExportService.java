@@ -8,10 +8,16 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 
+/**
+ * CSV出力管理
+ * 
+ * @author nsh14789
+ */
 public class CsvExportService {
 
 	/**
 	 * オブジェクトをoutputストリームに
+	 * 
 	 * @param file
 	 * @param obj
 	 * @throws IOException

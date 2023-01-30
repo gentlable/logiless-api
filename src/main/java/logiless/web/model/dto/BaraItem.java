@@ -32,5 +32,5 @@ public class BaraItem {
 
 	@NotNull
 	@PositiveOrZero
-	private int price;
+	private double price;
 }

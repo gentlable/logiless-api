@@ -6,12 +6,11 @@ import logiless.common.model.dto.sykka.SykkaDenpyo;
 import logiless.web.model.dto.Tenpo;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 public class JuchuDenpyo {
+
 	private String id;
 	private String code;
 	private String parentCode;

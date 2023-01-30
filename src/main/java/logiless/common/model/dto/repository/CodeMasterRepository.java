@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import logiless.common.model.dto.entity.CodeMasterEntity;
+import logiless.common.model.entity.CodeMasterEntity;
 
 public interface CodeMasterRepository {
 	

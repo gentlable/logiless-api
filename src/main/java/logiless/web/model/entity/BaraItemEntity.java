@@ -12,18 +12,18 @@ import lombok.Setter;
 @Entity
 @Table(name = "api_m_bara_item")
 public class BaraItemEntity {
-	
+
 	@Id
 	private String code;
-	
+
 	private String name;
-	
+
 	private String tenpoCode;
-	
+
 	private String setItemCode;
-	
+
 	private int quantity;
-	
-	private int price;
+
+	private double price;
 
 }

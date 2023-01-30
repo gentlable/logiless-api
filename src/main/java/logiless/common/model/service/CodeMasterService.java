@@ -1,4 +1,4 @@
-package logiless.common.model.dto.service;
+package logiless.common.model.service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import logiless.common.model.dto.entity.CodeMasterEntity;
 import logiless.common.model.dto.repository.CodeMasterRepository;
+import logiless.common.model.entity.CodeMasterEntity;
 
 public class CodeMasterService {
 	
