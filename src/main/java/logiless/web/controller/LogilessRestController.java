@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import logiless.web.config.SessionSample;
+import logiless.common.model.dto.common.SessionComponent;
 import logiless.web.model.service.OAuth2Service;
 
 @RestController
 public class LogilessRestController {
 
 	@Autowired
-	protected SessionSample sessionSample;
+	protected SessionComponent sessionSample;
 
 	private OAuth2Service oauth2Service;
 

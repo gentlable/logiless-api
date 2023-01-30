@@ -17,23 +17,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
 import logiless.common.model.dto.common.LogilessResponse;
+import logiless.common.model.dto.common.SessionComponent;
 import logiless.common.model.service.LogilessApiService;
-import logiless.web.config.SessionSample;
 import logiless.web.model.dto.OAuth2;
 import logiless.web.model.dto.Tenpo;
 import logiless.web.model.service.OAuth2Service;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 本アプリの基本コントローラー
+ * 
+ * @author nsh14789
+ *
+ */
 @Controller
 @Slf4j
 public class LogilessController {
 
 	private static final String merchantId = "1022";
-	private static final String FINISH_TIME = "00:00:00";
 
 	@Autowired
-	protected SessionSample sessionSample;
-	@SuppressWarnings("unused")
+	protected SessionComponent sessionSample;
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
@@ -41,28 +45,49 @@ public class LogilessController {
 	@Autowired
 	private OAuth2Service oauth2Service;
 
+	/**
+	 * ホーム画面へ遷移
+	 * 
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/")
 	public String index(Model model) {
-		// リソースからメッセージを取得する参考
+		// リソースからメッセージを取得するサンプル
 //		System.out.println(messageSource.getMessage("hello", new String[]{}, Locale.getDefault()));
 
-		// Spring Boot では、デフォルトのログレベルにINFOが設定されているため、TRACEとDEBUGは出力されません。
-
-		model.addAttribute("code", "1");
+//		model.addAttribute("code", "1");
 		return "index";
 	}
 
+	/**
+	 * ロジレス連携画面遷移
+	 * 
+	 * @return
+	 */
 	@GetMapping("/logiless")
 	public String logiless() {
 		return "logiless/index";
 	}
 
+	/**
+	 * Oauth2.0 承認画面遷移（リダイレクト）
+	 * 
+	 * @return
+	 */
 	@GetMapping("/logiless/get")
 	public String logilessGet() {
 		String redirectUrl = oauth2Service.getUrl();
 		return "redirect:" + redirectUrl;
 	}
 
+	/**
+	 * リダイレクトで承認結果を表示する画面
+	 * 
+	 * @param code
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/logiless/getOAuth2")
 	public String logilessGetOAuth2(@RequestParam("code") String code, Model model) {
 
@@ -75,6 +100,12 @@ public class LogilessController {
 		return "logiless/getOAuth2";
 	}
 
+	/**
+	 * マニュアルリフレッシュ結果画面遷移
+	 * 
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/logiless/refresh")
 	public String logilessRefresh(Model model) {
 
@@ -88,6 +119,13 @@ public class LogilessController {
 		return "logiless/getOAuth2";
 	}
 
+	/**
+	 * ロジレスに登録されている店舗リスト表示（連携デモ用）
+	 * 
+	 * @param model
+	 * @param bs
+	 * @return
+	 */
 	@GetMapping("/logiless/get/tenpos/api")
 	public String logilessGetTenposApi(Model model, boolean... bs) {
 

@@ -14,23 +14,56 @@ import logiless.web.model.dto.Tenpo;
 import logiless.web.model.form.TenpoListForm;
 import logiless.web.model.service.TenpoService;
 
+/**
+ * デモページ用コントローラー
+ * 
+ * @author nsh14789
+ *
+ */
 @Controller
 public class DemoController {
 
 	@Autowired
 	TenpoService tenpoService;
 
+	/**
+	 * デモページメニュー
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/demo")
+	private String getDemo(Model model) {
+
+		return "demo/index";
+	}
+
+	/**
+	 * DB編集デモ、店舗マスタを編集できる
+	 * 
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/demo/edit")
 	private String getDemoEdit(Model model) {
+
+		// TODO 店舗取得してモデルにセット
 
 		return "demo/edit";
 	}
 
+	/**
+	 * 店舗マスタ登録
+	 * 
+	 * @param model
+	 * @param tenpo
+	 * @return
+	 */
 	@PostMapping("/demo/edit")
 	private String postDemoEdit(Model model, @ModelAttribute Tenpo tenpo) {
 
 		boolean result = tenpoService.insertTenpo(tenpo);
-		if(result) {
+		if (result) {
 			model.addAttribute("message", "登録成功しました。");
 		} else {
 			model.addAttribute("message", "登録失敗しました。");
@@ -38,8 +71,15 @@ public class DemoController {
 		return "demo/edit";
 	}
 
+	/**
+	 * 複数店舗編集画面へ遷移
+	 * 
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/demo/editTenpoList")
 	private String getDemoEditTenpoList(Model model) {
+
 		List<Tenpo> tenpoList = new ArrayList<Tenpo>();
 		tenpoList.add(new Tenpo());
 		TenpoListForm tenpoListForm = new TenpoListForm();
@@ -48,11 +88,18 @@ public class DemoController {
 		return "demo/editTenpoList";
 	}
 
+	/**
+	 * 複数店舗編集登録
+	 * 
+	 * @param model
+	 * @param tenpoListForm
+	 * @return
+	 */
 	@PostMapping("/demo/editTenpoList")
 	private String postDemoEditTenpoList(Model model, @ModelAttribute TenpoListForm tenpoListForm) {
 
 		boolean result = tenpoService.insertTenpoList(tenpoListForm);
-		if(result) {
+		if (result) {
 			model.addAttribute("message", "登録成功しました。");
 		} else {
 			model.addAttribute("message", "登録失敗しました。");

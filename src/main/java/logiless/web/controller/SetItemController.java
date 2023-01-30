@@ -16,6 +16,12 @@ import logiless.web.model.dto.Tenpo;
 import logiless.web.model.form.SetItemForm;
 import logiless.web.model.service.SetItemService;
 
+/**
+ * セット商品マスター関連画面コントローラー
+ * 
+ * @author nsh14789
+ *
+ */
 @Controller
 public class SetItemController {
 
@@ -45,8 +51,10 @@ public class SetItemController {
 	}
 
 	/**
-	 * セット商品マスター詳細画面
-	 * 店舗コードとセット商品コードがパラムに含まれている場合、編集画面
+	 * セット商品マスター詳細画面<br>
+	 * 店舗コードとセット商品コードがパラムに含まれている場合、編集画面<br>
+	 * 含まれていない場合新規登録画面
+	 * 
 	 * @param model
 	 * @param setItemCode
 	 * @param tenpoCode
@@ -59,12 +67,13 @@ public class SetItemController {
 
 		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
 		model.addAttribute("tenpoList", tenpoList);
-		
+
 		SetItemForm setItemForm = new SetItemForm();
 		List<BaraItem> baraItemList = new ArrayList<BaraItem>();
 		baraItemList.add(new BaraItem());
 		setItemForm.setBaraItemList(baraItemList);
-		
+
+		// 新規登録と編集を判別するためのフラグ
 		boolean editFlg = false;
 
 		if (tenpoCode != null && setItemCode != null) {
@@ -72,27 +81,44 @@ public class SetItemController {
 			setItemForm.setBaraItemList(setItemService.getBaraItemByTenpoCodeAndSetItemCode(tenpoCode, setItemCode));
 			editFlg = true;
 		}
+
 		model.addAttribute("editFlg", editFlg);
 		model.addAttribute("tenpoCode", tenpoCode);
 		model.addAttribute("setItemForm", setItemForm);
-		
+
 		return "setItem/master/detail";
 	}
-	
+
+	/**
+	 * セット商品情報登録
+	 * 
+	 * @param model
+	 * @param setItemForm
+	 * @return
+	 */
 	@PostMapping("/setItem/master/submit")
-	public String setItemMasterSubmit(Model model,
-			@Param("setItemForm") SetItemForm setItemForm) {
+	public String setItemMasterSubmit(Model model, @Param("setItemForm") SetItemForm setItemForm) {
 
 		model.addAttribute("message", "登録が完了しました");
 
 		return "setItem/master/list";
 	}
 
+	/**
+	 * セット商品情報一括登録画面初期遷移
+	 * 
+	 * @return
+	 */
 	@GetMapping("/setItem/upload")
 	public String setItemUpload() {
 		return "setItem/upload/index";
 	}
 
+	/**
+	 * * セット商品情報一括登録完了画面
+	 * 
+	 * @return
+	 */
 	@GetMapping("/setItem/upload/complete")
 	public String setItemUploadComplete() {
 		return "setItem/upload/complete";

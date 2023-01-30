@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import logiless.web.config.OAuth2Properties;
-import logiless.web.config.SessionSample;
+import logiless.common.model.dto.common.SessionComponent;
+import logiless.config.OAuth2Properties;
 import logiless.web.model.dto.OAuth2;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OAuth2Service {
 
 	@Autowired
-	protected SessionSample sessionSample;
+	protected SessionComponent sessionSample;
 
 	private OAuth2Properties oauth2Properties;
 

@@ -1,4 +1,4 @@
-package logiless.web.config;
+package logiless.common.model.dto.common;
 
 import java.io.Serializable;
 
@@ -12,16 +12,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Component
-@Scope(value="session", proxyMode=ScopedProxyMode.TARGET_CLASS)
-public class SessionSample implements Serializable {
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class SessionComponent implements Serializable {
 
 	private static final long serialVersionUID = -8419277060363935532L;
-	
+
 	private String username = "廣海 真吾";
-	
 	private String accessToken;
 	private String refreshToken;
-	
-	
-	
+
 }
