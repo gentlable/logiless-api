@@ -54,7 +54,7 @@ public class LogilessApiService {
 		LocalDate date = null;
 
 		if (syoriDt == null) {
-			date = LocalDate.now().minusDays(1);
+			date = LocalDate.now();
 		} else {
 			date = LocalDate.parse(syoriDt, formatter);
 		}
@@ -68,7 +68,7 @@ public class LogilessApiService {
 		date.format(formatter);
 
 		String documentStatus = "Shipped";
-		String finishedAtFrom = date.format(formatter) + " " + FINISH_TIME;
+		String finishedAtFrom = date.minusDays(1).format(formatter) + " " + FINISH_TIME;
 		String finishedAtTo = date.plusDays(1).format(formatter) + " " + FINISH_TIME;
 
 		HttpHeaders headers = new HttpHeaders();
@@ -80,9 +80,9 @@ public class LogilessApiService {
 
 			List<JuchuDenpyo> juchuDenpyoList = new ArrayList<>();
 
-			while (true) {
+			int page = 1;
 
-				int page = 1;
+			while (true) {
 
 				RequestEntity<?> req = RequestEntity
 						.get(endpoint, merchantId, page, documentStatus, finishedAtFrom, finishedAtTo, tenpoCd)
@@ -123,10 +123,12 @@ public class LogilessApiService {
 
 			}
 
+			String filenameDate = date.format(formatter);
+
 			LocalDateTime dateTime = LocalDateTime.now();
 			formatter = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
 
-			fileOutputService.output("logilessApi_" + dateTime.format(formatter), csvMapper.writer(schema)
+			fileOutputService.output("logiless_sykkaJisseki_seikatuItiba_" + filenameDate, csvMapper.writer(schema)
 					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(newJuchuDenpyoList)));
 
 		} catch (HttpClientErrorException e) {

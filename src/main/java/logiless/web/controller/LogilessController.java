@@ -60,6 +60,12 @@ public class LogilessController {
 		return "index";
 	}
 
+	@GetMapping("error")
+	public String error(Model model) {
+		model.addAttribute("test", "test");
+		return "error";
+	}
+
 	/**
 	 * ロジレス連携画面遷移
 	 * 

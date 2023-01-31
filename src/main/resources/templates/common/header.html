@@ -8,8 +8,9 @@
 
 			<div class="text-end">
 				<span class="navbar-text me-3" th:text="${@sessionComponent.username}"></span>
-				<button type="submit" formmethod="get" class="btn btn-outline-light me-2"
-					th:text=#{text.logout} onclick="location.href='/logout'"></button>
+				<form method="post" name="form1" action="/logout" style="display: inline-block">
+					<button type="submit" class="btn btn-outline-light me-2" th:text=#{text.logout}></button>
+				</form>
 			</div>
 		</div>
 	</div>

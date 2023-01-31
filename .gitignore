@@ -33,6 +33,6 @@ build/
 .vscode/
 
 ### 
-application.yml
+application*.yml
 upload-dir/
 output/

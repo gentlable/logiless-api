@@ -32,7 +32,7 @@ public class FileOutputService {
 
 		try {
 
-			fo = new FileOutputStream(OUTPUT_DIR + "/" + filename + ".csv");
+			fo = new FileOutputStream(OUTPUT_DIR + "/" + filename + ".csv", true);
 			osw = new OutputStreamWriter(fo, "MS932");
 			bw = new BufferedWriter(osw);
 
@@ -40,6 +40,7 @@ public class FileOutputService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+
 		} finally {
 
 			try {
