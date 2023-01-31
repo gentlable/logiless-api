@@ -16,7 +16,7 @@ import logiless.web.model.service.OAuth2Service;
 public class LogilessRestController {
 
 	@Autowired
-	protected SessionComponent sessionSample;
+	protected SessionComponent sessionComponent;
 
 	private OAuth2Service oauth2Service;
 

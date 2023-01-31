@@ -111,6 +111,7 @@ public class LogilessApiService {
 			}
 
 			CsvMapper csvMapper = new CsvMapper();
+			// XXX 効いていない
 			csvMapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true);
 			CsvSchema schema = csvMapper.schemaFor(JuchuCsv.class).withHeader();
 

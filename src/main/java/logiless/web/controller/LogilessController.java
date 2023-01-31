@@ -37,7 +37,7 @@ public class LogilessController {
 	private static final String merchantId = "1022";
 
 	@Autowired
-	protected SessionComponent sessionSample;
+	protected SessionComponent sessionComponent;
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
@@ -94,8 +94,8 @@ public class LogilessController {
 		ResponseEntity<OAuth2> res = oauth2Service.getOAuth2(code);
 		model.addAttribute("statusCode", res.getStatusCode());
 
-		sessionSample.setAccessToken(res.getBody().getAccessToken());
-		sessionSample.setRefreshToken(res.getBody().getRefreshToken());
+		sessionComponent.setAccessToken(res.getBody().getAccessToken());
+		sessionComponent.setRefreshToken(res.getBody().getRefreshToken());
 
 		return "logiless/getOAuth2";
 	}
@@ -113,8 +113,8 @@ public class LogilessController {
 			return "logiless/index";
 		}
 
-		sessionSample.setAccessToken(sessionSample.getAccessToken());
-		sessionSample.setRefreshToken(sessionSample.getRefreshToken());
+		sessionComponent.setAccessToken(sessionComponent.getAccessToken());
+		sessionComponent.setRefreshToken(sessionComponent.getRefreshToken());
 
 		return "logiless/getOAuth2";
 	}
@@ -134,7 +134,7 @@ public class LogilessController {
 		final String endpoint = "https://app2.logiless.com/api/v1/merchant/{merchant_id}/stores";
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Bearer " + sessionSample.getAccessToken());
+		headers.add("Authorization", "Bearer " + sessionComponent.getAccessToken());
 		try {
 			// リクエスト情報の作成
 			RequestEntity<?> req = RequestEntity.get(endpoint, merchantId).headers(headers).build();

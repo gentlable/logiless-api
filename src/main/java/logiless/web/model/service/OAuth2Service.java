@@ -11,12 +11,18 @@ import logiless.config.OAuth2Properties;
 import logiless.web.model.dto.OAuth2;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * OAuthに関連する処理
+ * 
+ * @author nsh14789
+ *
+ */
 @Service
 @Slf4j
 public class OAuth2Service {
 
 	@Autowired
-	protected SessionComponent sessionSample;
+	protected SessionComponent sessionComponent;
 
 	private OAuth2Properties oauth2Properties;
 
@@ -27,12 +33,13 @@ public class OAuth2Service {
 
 	/**
 	 * ロジレスの承認画面へのリダイレクト
+	 * 
 	 * @return
 	 */
 	public String getUrl() {
 		String clientId = oauth2Properties.getClientId();
 		String responseType = "code";
-		String redirectUri = "http://localhost:60000/logiless/getOAuth2";
+		String redirectUri = oauth2Properties.getRedirectUri();
 		final String endpoint = "https://app2.logiless.com/oauth/v2/auth?client_id=" + clientId + "&response_type="
 				+ responseType + "&redirect_uri=" + redirectUri;
 
@@ -41,6 +48,7 @@ public class OAuth2Service {
 
 	/**
 	 * トークンの取得
+	 * 
 	 * @param code
 	 * @return
 	 */
@@ -51,7 +59,7 @@ public class OAuth2Service {
 		String clientId = oauth2Properties.getClientId();
 		String clientSecret = oauth2Properties.getClientSecret();
 		String grantType = "authorization_code";
-		String redirectUri = "http://localhost:60000/logiless/getOAuth2";
+		String redirectUri = oauth2Properties.getRedirectUri();
 
 		// リクエスト情報の作成
 		RequestEntity<?> req = RequestEntity.get(endpoint, clientId, clientSecret, code, grantType, redirectUri)
@@ -62,6 +70,7 @@ public class OAuth2Service {
 
 	/**
 	 * トークンの再取得
+	 * 
 	 * @return
 	 */
 	public boolean refreshToken() {
@@ -70,7 +79,7 @@ public class OAuth2Service {
 		final String endpoint = "https://app2.logiless.com/oauth2/token?client_id={client_id}&client_secret={client_secret}&refresh_token={refresh_token}&grant_type={grant_type}";
 		String clientId = oauth2Properties.getClientId();
 		String clientSecret = oauth2Properties.getClientSecret();
-		String refreshToken = sessionSample.getRefreshToken();
+		String refreshToken = sessionComponent.getRefreshToken();
 		String grantType = "refresh_token";
 
 		if (refreshToken == null) {
@@ -84,8 +93,8 @@ public class OAuth2Service {
 			RequestEntity<?> req = RequestEntity.get(endpoint, clientId, clientSecret, refreshToken, grantType).build();
 			ResponseEntity<OAuth2> res = rest.exchange(req, OAuth2.class);
 
-			sessionSample.setAccessToken(res.getBody().getAccessToken());
-			sessionSample.setRefreshToken(res.getBody().getRefreshToken());
+			sessionComponent.setAccessToken(res.getBody().getAccessToken());
+			sessionComponent.setRefreshToken(res.getBody().getRefreshToken());
 
 		} catch (Exception e) {
 			e.printStackTrace();

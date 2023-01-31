@@ -7,9 +7,9 @@
 			<p th:text="${title}" class="me-auto align-items-center text-white text-decoration-none mb-0"></p>
 
 			<div class="text-end">
-				<span class="navbar-text me-3" th:text="${@sessionSample.username}"></span>
+				<span class="navbar-text me-3" th:text="${@sessionComponent.username}"></span>
 				<button type="submit" formmethod="get" class="btn btn-outline-light me-2"
-					th:text=#{text.logout} onclick="location.href='/login'"></button>
+					th:text=#{text.logout} onclick="location.href='/logout'"></button>
 			</div>
 		</div>
 	</div>

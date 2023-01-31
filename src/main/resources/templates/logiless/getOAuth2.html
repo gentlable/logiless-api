@@ -9,8 +9,8 @@
 		<div class="container">
 			<h1>ロジレス連携に成功した！！！</h1>
 			<p th:text="'statusCode：　'+${statusCode}"></p>
-			<p th:text="'accessToken：　'+${@sessionSample.accessToken}"></p>
-			<p th:text="'refreshToken：　'+${@sessionSample.refreshToken}"></p>
+			<p th:text="'accessToken：　'+${@sessionComponent.accessToken}"></p>
+			<p th:text="'refreshToken：　'+${@sessionComponent.refreshToken}"></p>
 			<button class="btn btn-light btn-lg" onclick="location.href='/logiless'"
 				th:text="ロジレスメニューに戻る"></button>
 
