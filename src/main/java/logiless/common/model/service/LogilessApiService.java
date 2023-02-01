@@ -31,14 +31,19 @@ import logiless.web.model.service.OAuth2Service;
 @Service
 public class LogilessApiService {
 
+	private final SessionComponent sessionComponent;
+	private final JuchuCsvConvertService juchuCsvConvertService;
+	private final FileOutputService fileOutputService;
+	private final OAuth2Service oauth2Service;
+
 	@Autowired
-	protected SessionComponent sessionComponent;
-	@Autowired
-	private JuchuCsvConvertService juchuCsvConvertService;
-	@Autowired
-	private FileOutputService fileOutputService;
-	@Autowired
-	private OAuth2Service oauth2Service;
+	public LogilessApiService(SessionComponent sessionComponent, JuchuCsvConvertService juchuCsvConvertService,
+			FileOutputService fileOutputService, OAuth2Service oauth2Service) {
+		this.sessionComponent = sessionComponent;
+		this.juchuCsvConvertService = juchuCsvConvertService;
+		this.fileOutputService = fileOutputService;
+		this.oauth2Service = oauth2Service;
+	}
 
 	private static final String API_ENDPOINT = "https://app2.logiless.com/api/v1/merchant/{merchant_id}";
 

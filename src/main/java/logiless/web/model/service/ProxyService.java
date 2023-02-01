@@ -12,7 +12,7 @@ import logiless.config.ProxyProperties;
 @Service
 public class ProxyService {
 
-	private ProxyProperties proxyProperties;
+	private final ProxyProperties proxyProperties;
 
 	@Autowired
 	ProxyService(ProxyProperties proxyProperties) {

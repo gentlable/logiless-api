@@ -20,6 +20,13 @@ import logiless.web.model.service.SetItemService;
 @Service
 public class JuchuCsvConvertService {
 
+	private final SetItemService setItemService;
+
+	@Autowired
+	public JuchuCsvConvertService(SetItemService setItemService) {
+		this.setItemService = setItemService;
+	}
+
 	private static final Map<String, String> DENPYO_STATUS_MAP = new HashMap<String, String>() {
 		{
 			put("Processing", "処理中");
@@ -511,9 +518,6 @@ public class JuchuCsvConvertService {
 
 		return list;
 	}
-
-	@Autowired
-	SetItemService setItemService;
 
 	/**
 	 * 受注伝票データのバラ商品について単価を付与

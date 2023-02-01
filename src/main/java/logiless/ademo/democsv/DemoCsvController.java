@@ -13,8 +13,13 @@ import logiless.common.model.service.FileOutputService;
 
 @Controller
 public class DemoCsvController {
+
+	private final FileOutputService fileOutputService;
+
 	@Autowired
-	private FileOutputService fileOutputService;
+	public DemoCsvController(FileOutputService fileOutputService) {
+		this.fileOutputService = fileOutputService;
+	}
 
 	private static final String json = "{\r\n" + "  \"id\": \"0001\",\r\n" + "  \"name\": \"test\",\r\n"
 			+ "  \"nulll\": null,\r\n" + "  \"empty\": \"\"\r\n" + "}\r\n" + "";

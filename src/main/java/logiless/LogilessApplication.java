@@ -13,16 +13,20 @@ import logiless.web.model.service.ProxyService;
 @EnableConfigurationProperties(StorageProperties.class)
 //@EnableScheduling
 public class LogilessApplication {
-	
+
+	private final ProxyService proxyService;
+
 	@Autowired
-	ProxyService ps;
+	public LogilessApplication(ProxyService proxyService) {
+		this.proxyService = proxyService;
+	}
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(LogilessApplication.class, args);
 		LogilessApplication app = ctx.getBean(LogilessApplication.class);
-		
+
 		// プロキシ突破のため一度httpでネット接続する。
-		app.ps.proxyAccess();
+		app.proxyService.proxyAccess();
 
 	}
 

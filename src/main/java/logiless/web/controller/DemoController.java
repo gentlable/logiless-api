@@ -23,8 +23,12 @@ import logiless.web.model.service.TenpoService;
 @Controller
 public class DemoController {
 
+	private final TenpoService tenpoService;
+
 	@Autowired
-	TenpoService tenpoService;
+	public DemoController(TenpoService tenpoService) {
+		this.tenpoService = tenpoService;
+	}
 
 	/**
 	 * デモページメニュー

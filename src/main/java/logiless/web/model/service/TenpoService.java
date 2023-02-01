@@ -18,8 +18,12 @@ import logiless.web.model.repository.TenpoRepository;
 @Transactional
 public class TenpoService {
 
+	private final TenpoRepository tenpoRepository;
+
 	@Autowired
-	private TenpoRepository tenpoRepository;
+	public TenpoService(TenpoRepository tenpoRepository) {
+		this.tenpoRepository = tenpoRepository;
+	}
 
 	/**
 	 * 店舗コードで店舗を取得
@@ -89,12 +93,12 @@ public class TenpoService {
 	 * @return
 	 */
 	public boolean insertTenpoList(TenpoListForm tenpoListForm) {
-		
+
 		List<Tenpo> tenpoList = tenpoListForm.getTenpoList();
 
 		try {
 			for (Tenpo tenpo : tenpoList) {
-				if(tenpo.getCode() == null || tenpo.getCode().equals("")) {
+				if (tenpo.getCode() == null || tenpo.getCode().equals("")) {
 					continue;
 				}
 				TenpoEntity entity = new TenpoEntity();

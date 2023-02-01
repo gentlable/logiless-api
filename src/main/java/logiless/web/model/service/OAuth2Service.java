@@ -21,13 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OAuth2Service {
 
-	@Autowired
-	protected SessionComponent sessionComponent;
-
-	private OAuth2Properties oauth2Properties;
+	private final SessionComponent sessionComponent;
+	private final OAuth2Properties oauth2Properties;
 
 	@Autowired
-	OAuth2Service(OAuth2Properties oauth2Properties) {
+	public OAuth2Service(SessionComponent sessionComponent, OAuth2Properties oauth2Properties) {
+		this.sessionComponent = sessionComponent;
 		this.oauth2Properties = oauth2Properties;
 	}
 

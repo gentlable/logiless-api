@@ -36,14 +36,19 @@ public class LogilessController {
 
 	private static final String merchantId = "1022";
 
+	private final SessionComponent sessionComponent;
+	private final MessageSource messageSource;
+	private final LogilessApiService logilessApiService;
+	private final OAuth2Service oauth2Service;
+
 	@Autowired
-	protected SessionComponent sessionComponent;
-	@Autowired
-	private MessageSource messageSource;
-	@Autowired
-	private LogilessApiService logilessApiService;
-	@Autowired
-	private OAuth2Service oauth2Service;
+	public LogilessController(SessionComponent sessionComponent, MessageSource messageSource,
+			LogilessApiService logilessApiService, OAuth2Service oauth2Service) {
+		this.sessionComponent = sessionComponent;
+		this.messageSource = messageSource;
+		this.logilessApiService = logilessApiService;
+		this.oauth2Service = oauth2Service;
+	}
 
 	/**
 	 * ホーム画面へ遷移
