@@ -115,23 +115,23 @@ public class LogilessApiService {
 			}
 
 			CsvMapper csvMapper = new CsvMapper();
-			// XXX 効いていない
+			// TODO 効いていない
 			csvMapper.configure(CsvGenerator.Feature.ALWAYS_QUOTE_STRINGS, true);
 			CsvSchema schema = csvMapper.schemaFor(JuchuCsv.class).withHeader();
 
 			List<JuchuDenpyo> newJuchuDenpyoList = new ArrayList<>();
 
-			fileOutputService.output("logiless_demo", csvMapper.writer(schema)
-					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(juchuDenpyoList)));
-
 			// セット商品分割処理
 			for (JuchuDenpyo juchuDenpyo : juchuDenpyoList) {
 
+				// TODO どのメソッドを使うか確定したら他の処理は消す
 				newJuchuDenpyoList.add(juchuCsvConvertService.addBaraItem1(juchuDenpyo));
 
 			}
 
-			fileOutputService.output("logiless_sykkaJisseki_seikatuIchiba", csvMapper.writer(schema)
+			String filename = "logiless_sykkaJisseki_seikatuIchiba";
+
+			fileOutputService.output(filename, csvMapper.writer(schema)
 					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(newJuchuDenpyoList)));
 
 		} catch (HttpClientErrorException e) {

@@ -98,6 +98,9 @@ public class SetItemService {
 
 		SetItemEntity e = new SetItemEntity();
 		// TODO ここもっとかっこよくかけたらいいな
+
+		// 空文字を入れると空文字と一致検索しちゃうので、空文字の場合は格納せず
+		// 検索条件としない
 		if (!StringUtils.isEmpty(code)) {
 			e.setCode(code);
 		}
@@ -106,10 +109,9 @@ public class SetItemService {
 		}
 		e.setTenpoCode(tenpoCode);
 
-		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.startsWith());
+		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.contains());
 
 		List<SetItemEntity> entityList = setItemRepository.findAll(Example.of(e, matcher));
-//		List<SetItemEntity> entityList = setItemRepository.findAll(Example.of(e));
 		List<SetItem> setItemList = new ArrayList<SetItem>();
 		for (SetItemEntity entity : entityList) {
 			SetItem setItem = new SetItem();
@@ -190,15 +192,4 @@ public class SetItemService {
 		return false;
 	}
 
-	// TODO 共通化？
-//	private <T, O> List<O> test(O dto, List<T> entityList){
-//		
-//		List<T> dtoList = new ArrayList<T>();
-//		for(T entity : entityList) {
-//			O o = new O();
-//			BeanUtils.copyProperties(o, entity);
-//			dtoList.add(o);
-//		}
-//		return null;
-//	}
 }
