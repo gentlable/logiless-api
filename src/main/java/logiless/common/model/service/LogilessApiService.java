@@ -1,7 +1,6 @@
 package logiless.common.model.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,18 +121,17 @@ public class LogilessApiService {
 
 			List<JuchuDenpyo> newJuchuDenpyoList = new ArrayList<>();
 
+			fileOutputService.output("logiless_demo", csvMapper.writer(schema)
+					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(juchuDenpyoList)));
+
+			// セット商品分割処理
 			for (JuchuDenpyo juchuDenpyo : juchuDenpyoList) {
 
-				newJuchuDenpyoList.add(juchuCsvConvertService.AddBaraItem(juchuDenpyo));
+				newJuchuDenpyoList.add(juchuCsvConvertService.addBaraItem1(juchuDenpyo));
 
 			}
 
-			String filenameDate = date.format(formatter);
-
-			LocalDateTime dateTime = LocalDateTime.now();
-			formatter = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
-
-			fileOutputService.output("logiless_sykkaJisseki_seikatuItiba_" + filenameDate, csvMapper.writer(schema)
+			fileOutputService.output("logiless_sykkaJisseki_seikatuIchiba", csvMapper.writer(schema)
 					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(newJuchuDenpyoList)));
 
 		} catch (HttpClientErrorException e) {

@@ -20,11 +20,12 @@
 					<div class="col-4">
 						<label for="setItemCode" class="form-label" th:text="セット商品ＣＤ"></label>
 						<input type="text" class="form-control" id="setItemCode" name="setItemCode"
-							placeholder="1234567890">
+							th:value="${setItemCode}" placeholder="1234567890">
 					</div>
 					<div class="col-4">
 						<label for="setItemName" class="form-label" th:text="セット商品名"></label>
-						<input type="text" class="form-control" id="setItemName" name="setItemName" placeholder="キリンセット">
+						<input type="text" class="form-control" id="setItemName" name="setItemName"
+							th:value="${setItemName}" placeholder="キリンセット">
 					</div>
 					<div class="col-2">
 						<button type="submit" class="btn btn-dark">検索</button>
@@ -124,20 +125,23 @@
 		}
 	</script>
 	<style>
-	.delete-th {
-		min-width: 50px;
-	}
-	.no-th {
-		min-width: 50px;
-	}
-	.tenpo-th {
-		min-width: 85px;
-	}
-	.set-item-code-th {
-		min-width: 120px;
-	}
-	.set-item-name-th {
-	}
+		.delete-th {
+			min-width: 50px;
+		}
+
+		.no-th {
+			min-width: 50px;
+		}
+
+		.tenpo-th {
+			min-width: 85px;
+		}
+
+		.set-item-code-th {
+			min-width: 120px;
+		}
+
+		.set-item-name-th {}
 	</style>
 </body>
 

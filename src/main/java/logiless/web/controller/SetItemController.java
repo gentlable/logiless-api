@@ -25,11 +25,15 @@ import logiless.web.model.service.SetItemService;
 @Controller
 public class SetItemController {
 
+	private final SetItemService setItemService;
+
 	@Autowired
-	private SetItemService setItemService;
+	public SetItemController(SetItemService setItemService) {
+		this.setItemService = setItemService;
+	}
 
 	/**
-	 * セット商品マスター画面初期表示
+	 * セット商品マスター画面表示
 	 * 
 	 * @param model
 	 * @return
@@ -38,14 +42,19 @@ public class SetItemController {
 	public String getSetItemMasterList(Model model,
 			@RequestParam(name = "tenpoCode", required = false) String tenpoCode,
 			@RequestParam(name = "setItemCode", required = false) String setItemCode,
-			@RequestParam(name = "name", required = false) String name) {
+			@RequestParam(name = "setItemName", required = false) String setItemName) {
 
 		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
 		model.addAttribute("tenpoList", tenpoList);
 
-		if ((tenpoCode != null) || (setItemCode != null) || (name != null)) {
-			model.addAttribute("resultList", setItemService.getSetItemListByTenpoCode(tenpoCode));
+		if (tenpoCode != null) {
+			model.addAttribute("resultList",
+					setItemService.getSetItemListByCodeAndNameLikeAndTenpoCode(setItemCode, setItemName, tenpoCode));
 		}
+
+		model.addAttribute("tenpoCode", tenpoCode);
+		model.addAttribute("setItemCode", setItemCode);
+		model.addAttribute("setItemName", setItemName);
 
 		return "setItem/master/list";
 	}

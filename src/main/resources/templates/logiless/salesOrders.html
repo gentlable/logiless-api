@@ -5,14 +5,14 @@
 </head>
 
 <body>
-	<div th:replace="common/header :: header_fragment(title=#{text.setItemMaster})"></div>
+	<div th:replace="common/header :: header_fragment(title='出荷実績取得')"></div>
 	<main>
 		<div class="container">
 			<div class="container">
 				<form action="#" th:action="@{/logiless/api/get/salesOrders}" class="row g-3" method="get">
 					<div class="col-4">
-						<label for="setItemCode" class="form-label" th:text="セット商品ＣＤ"></label>
-						<input type="date" class="form-control" value="2023-01-26" name="syoriDt">
+						<label for="setItemCode" class="form-label" th:text="処理日"></label>
+						<input type="date" class="form-control" th:value="${date}" name="syoriDt">
 					</div>
 					<div>
 						<button type="submit" class="btn btn-light btn-lg" th:text="取得"></button>

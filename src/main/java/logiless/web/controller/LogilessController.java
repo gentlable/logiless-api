@@ -1,5 +1,8 @@
 package logiless.web.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -185,6 +188,11 @@ public class LogilessController {
 
 	@GetMapping("/logiless/salesOrders")
 	public String logilessSalesOrders(Model model) {
+
+		LocalDate date = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+		model.addAttribute("date", date.format(formatter));
 
 		return "logiless/salesOrders";
 	}
