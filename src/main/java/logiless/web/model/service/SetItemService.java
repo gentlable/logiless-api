@@ -155,7 +155,7 @@ public class SetItemService {
 	}
 
 	/**
-	 * セット商品マスターとバラ商品マスターに登録する。
+	 * セット商品マスターとバラ商品マスターに追加する。
 	 * 
 	 * @param setItemForm
 	 * @return
@@ -176,7 +176,7 @@ public class SetItemService {
 
 		try {
 			for (BaraItem baraItem : baraItemList) {
-				if (baraItem.getCode() == null || baraItem.getCode().equals("")) {
+				if (StringUtils.isEmpty(baraItem.getCode())) {
 					continue;
 				}
 				BaraItemEntity baraItemEntity = new BaraItemEntity();
@@ -190,6 +190,59 @@ public class SetItemService {
 		}
 
 		return false;
+	}
+
+	/**
+	 * セット商品マスターとバラ商品マスターを編集する。<br>
+	 * セット商品マスターはセット商品名に変更があった時のみ更新する<br>
+	 * バラ商品マスターは店舗コードとセット商品コードで検索し、<br>
+	 * 対象の明細を全削除した後追加する。
+	 * 
+	 * @param setItemForm
+	 * @return
+	 */
+	public boolean updateSetItem(SetItemForm setItemForm) {
+
+		SetItemEntity setItemEntity = new SetItemEntity();
+		BeanUtils.copyProperties(setItemForm.getSetItem(), setItemEntity);
+
+		try {
+			setItemRepository.save(setItemEntity);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		List<BaraItem> baraItemList = setItemForm.getBaraItemList();
+
+		String tenpoCode = setItemForm.getSetItem().getTenpoCode();
+		String setItemCode = setItemForm.getSetItem().getCode();
+
+		try {
+			baraItemRepository.deleteByTenpoCodeAndSetItemCode(tenpoCode, setItemCode);
+
+			if (baraItemList != null) {
+
+				for (BaraItem baraItem : baraItemList) {
+					if (StringUtils.isEmpty(baraItem.getCode())) {
+						continue;
+					}
+					BaraItemEntity baraItemEntity = new BaraItemEntity();
+					BeanUtils.copyProperties(baraItem, baraItemEntity);
+					baraItemEntity.setTenpoCode(tenpoCode);
+					baraItemEntity.setSetItemCode(setItemCode);
+
+					baraItemRepository.save(baraItemEntity);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+
 	}
 
 }
