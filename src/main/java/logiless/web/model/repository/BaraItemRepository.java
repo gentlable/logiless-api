@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import logiless.web.model.entity.BaraItemEntity;
 
+@Transactional
 @Repository
 public interface BaraItemRepository extends JpaRepository<BaraItemEntity, String> {
 

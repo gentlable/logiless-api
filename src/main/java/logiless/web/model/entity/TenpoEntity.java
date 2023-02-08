@@ -1,6 +1,5 @@
 package logiless.web.model.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -11,14 +10,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "api_m_tenpo")
+@Table(name = "API_M_TENPO")
 public class TenpoEntity {
-	
+
 	@Id
-	@Column
 	private String code;
-	
-	@Column
+
 	private String name;
 
 }
