@@ -5,13 +5,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import logiless.web.com.storage.StorageProperties;
 import logiless.web.model.service.ProxyService;
 
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
-//@EnableScheduling
+@EnableScheduling
 public class LogilessApplication {
 
 	private final ProxyService proxyService;

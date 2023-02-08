@@ -23,18 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ScheduledTasksAPI {
 
-	private final SessionComponent sessionComponent;
-	private final MessageSource messageSource;
 	private final LogilessApiService logilessApiService;
-	private final OAuthService oauth2Service;
 
 	@Autowired
 	public ScheduledTasksAPI(SessionComponent sessionComponent, MessageSource messageSource,
 			LogilessApiService logilessApiService, OAuthService oauth2Service) {
-		this.sessionComponent = sessionComponent;
-		this.messageSource = messageSource;
 		this.logilessApiService = logilessApiService;
-		this.oauth2Service = oauth2Service;
 	}
 
 	@Scheduled(cron = "${scheduler.cron}")
@@ -43,6 +37,12 @@ public class ScheduledTasksAPI {
 		LocalDate syoriDt = LocalDate.now();
 
 		boolean res = logilessApiService.getJuchu(syoriDt, "3901");
+
+		if (res) {
+			log.info("出荷実績を出力しました。");
+		} else {
+			log.error("出荷実績を出力できませんでした。");
+		}
 
 	}
 }

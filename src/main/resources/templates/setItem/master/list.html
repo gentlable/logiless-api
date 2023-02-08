@@ -36,6 +36,7 @@
 							value="csv"></button>
 					</div>
 				</form>
+				<p th:text="${message}"></p>
 			</div>
 			<div class="container mt-1">
 				<form method="post" th:object="${setItemListForm}" th:action="@{'/setItem/master/delete'}">

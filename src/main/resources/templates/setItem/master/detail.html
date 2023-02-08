@@ -13,7 +13,7 @@
 					<div class="col-4">
 						<label for="tenpo" class="form-label" th:text="#{text.tenpo}"></label>
 						<select class="form-select" th:field="*{setItem.tenpoCode}" th:if="${!editFlg}">
-							<option th:each="tenpo : ${tenpoList}" th:value="tenpo.code" th:text="${tenpo.name}">
+							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}">
 							</option>
 						</select>
 						<input type="text" class="form-control" th:field="*{setItem.tenpoCode}"

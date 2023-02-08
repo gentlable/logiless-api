@@ -7,8 +7,6 @@ import lombok.Setter;
 @Setter
 public class OAuthToken {
 
-	private long id;
-
 	private String platform;
 
 	private String accessToken;

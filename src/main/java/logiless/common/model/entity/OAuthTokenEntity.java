@@ -16,10 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OAuthTokenEntity {
-
 	@Id
-	private long id;
-
 	private String platform;
 
 	private String accessToken;

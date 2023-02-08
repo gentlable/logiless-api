@@ -120,7 +120,7 @@ public class SetItemController {
 
 		boolean result = setItemService.updateSetItem(setItemForm);
 		if (!result) {
-			model.addAttribute("message", "エラー登録に失敗しました。");
+			model.addAttribute("message", "エラー：登録に失敗しました。");
 		} else {
 			model.addAttribute("message", "登録が完了しました");
 		}

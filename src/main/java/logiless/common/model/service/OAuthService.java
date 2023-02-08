@@ -71,7 +71,9 @@ public class OAuthService {
 			String accessToken = res.getBody().getAccessToken();
 			String newRefreshToken = res.getBody().getRefreshToken();
 
-			oAuthTokenService.save("logiless", accessToken, newRefreshToken);
+			if (!oAuthTokenService.save("logiless", accessToken, newRefreshToken)) {
+				return null;
+			}
 
 			return res;
 

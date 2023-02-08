@@ -43,8 +43,7 @@ public class OAuthTokenService {
 	public boolean save(String platform, String accessToken, String refreshToken) {
 
 		OAuthTokenEntity entity = new OAuthTokenEntity();
-		// TODO 仕様考えて修正
-		entity.setId(1);
+
 		entity.setPlatform(platform);
 		entity.setAccessToken(accessToken);
 		entity.setRefreshToken(refreshToken);
