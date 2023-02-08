@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import logiless.web.model.dto.BaraItem;
+import logiless.web.model.dto.SetItem;
 import logiless.web.model.dto.Tenpo;
 import logiless.web.model.form.SetItemForm;
+import logiless.web.model.form.SetItemListForm;
 import logiless.web.model.service.SetItemService;
 
 /**
@@ -47,9 +49,17 @@ public class SetItemController {
 		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
 		model.addAttribute("tenpoList", tenpoList);
 
+		SetItemListForm setItemListForm = new SetItemListForm();
+
 		if (tenpoCode != null) {
-			model.addAttribute("resultList",
+
+			setItemListForm.setSetItemList(
 					setItemService.getSetItemListByCodeAndNameLikeAndTenpoCode(setItemCode, setItemName, tenpoCode));
+			model.addAttribute("setItemListForm", setItemListForm);
+		} else {
+
+			setItemListForm.setSetItemList(new ArrayList<SetItem>());
+			model.addAttribute("setItemListForm", setItemListForm);
 		}
 
 		model.addAttribute("tenpoCode", tenpoCode);
@@ -62,7 +72,7 @@ public class SetItemController {
 	/**
 	 * セット商品マスター詳細画面<br>
 	 * 店舗コードとセット商品コードがパラムに含まれている場合、編集画面<br>
-	 * 含まれていない場合新規登録画面
+	 * 含まれていない場合、新規登録画面
 	 * 
 	 * @param model
 	 * @param setItemCode
@@ -108,9 +118,40 @@ public class SetItemController {
 	@PostMapping("/setItem/master/submit")
 	public String setItemMasterSubmit(Model model, @Param("setItemForm") SetItemForm setItemForm) {
 
-		model.addAttribute("message", "登録が完了しました");
+		boolean result = setItemService.updateSetItem(setItemForm);
+		if (!result) {
+			model.addAttribute("message", "エラー登録に失敗しました。");
+		} else {
+			model.addAttribute("message", "登録が完了しました");
+		}
 
-		return "setItem/master/list";
+		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
+		model.addAttribute("tenpoList", tenpoList);
+
+		return "redirect:/setItem/master/list";
+	}
+
+	/**
+	 * セット商品情報削除
+	 * 
+	 * @param model
+	 * @param setItemForm
+	 * @return
+	 */
+	@PostMapping("/setItem/master/delete")
+	public String setItemMasterDelete(Model model, @Param("setItemListForm") SetItemListForm setItemListForm) {
+
+		boolean result = setItemService.deleteSetItem(setItemListForm);
+		if (!result) {
+			model.addAttribute("message", "エラー登録に失敗しました。");
+		} else {
+			model.addAttribute("message", "登録が完了しました");
+		}
+
+		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
+		model.addAttribute("tenpoList", tenpoList);
+
+		return "redirect:/setItem/master/list";
 	}
 
 	/**

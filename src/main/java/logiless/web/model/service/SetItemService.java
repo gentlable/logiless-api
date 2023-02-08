@@ -10,6 +10,8 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 
 import logiless.web.model.dto.BaraItem;
 import logiless.web.model.dto.SetItem;
@@ -18,6 +20,7 @@ import logiless.web.model.entity.BaraItemEntity;
 import logiless.web.model.entity.SetItemEntity;
 import logiless.web.model.entity.TenpoEntity;
 import logiless.web.model.form.SetItemForm;
+import logiless.web.model.form.SetItemListForm;
 import logiless.web.model.repository.BaraItemRepository;
 import logiless.web.model.repository.SetItemRepository;
 import logiless.web.model.repository.TenpoRepository;
@@ -36,6 +39,11 @@ public class SetItemService {
 		this.tenpoRepository = tenpoRepository;
 		this.setItemRepository = setItemRepository;
 		this.baraItemRepository = baraItemRepository;
+	}
+
+	@InitBinder
+	public void configureWebDataBinder(WebDataBinder binder) {
+		binder.setAutoGrowCollectionLimit(1024);
 	}
 
 	/**
@@ -99,8 +107,7 @@ public class SetItemService {
 		SetItemEntity e = new SetItemEntity();
 		// TODO ここもっとかっこよくかけたらいいな
 
-		// 空文字を入れると空文字と一致検索しちゃうので、空文字の場合は格納せず
-		// 検索条件としない
+		// 空文字を入れると空文字と一致検索しちゃうので、空文字の場合は格納せず検索条件としない
 		if (!StringUtils.isEmpty(code)) {
 			e.setCode(code);
 		}
@@ -193,7 +200,7 @@ public class SetItemService {
 	}
 
 	/**
-	 * セット商品マスターとバラ商品マスターを編集する。<br>
+	 * セット商品マスターとバラ商品マスターを更新する。<br>
 	 * セット商品マスターはセット商品名に変更があった時のみ更新する<br>
 	 * バラ商品マスターは店舗コードとセット商品コードで検索し、<br>
 	 * 対象の明細を全削除した後追加する。
@@ -242,7 +249,47 @@ public class SetItemService {
 		}
 
 		return true;
+	}
 
+	/**
+	 * セット商品マスターとバラ商品マスターを削除する。<br>
+	 * 
+	 * @param setItemForm
+	 * @return
+	 */
+	public boolean deleteSetItem(SetItemListForm setItemListForm) {
+
+		for (SetItem setItem : setItemListForm.getSetItemList()) {
+
+			if (!setItem.isCheck()) {
+				continue;
+			}
+
+			// 先にバラ商品から削除
+			String tenpoCode = setItem.getTenpoCode();
+			String setItemCode = setItem.getCode();
+
+			try {
+				baraItemRepository.deleteByTenpoCodeAndSetItemCode(tenpoCode, setItemCode);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+
+			// セット商品の削除
+			SetItemEntity setItemEntity = new SetItemEntity();
+			BeanUtils.copyProperties(setItem, setItemEntity);
+
+			try {
+				setItemRepository.delete(setItemEntity);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }

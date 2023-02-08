@@ -11,16 +11,22 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
+/**
+ * spring security configuration
+ * 
+ * @author nsh14789
+ *
+ */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-	//@formatter:off
+	// @formatter:off
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		
 		final HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
-
+		
 		http.authorizeHttpRequests((
 				requests) -> requests
 					.mvcMatchers("/webjars/**").permitAll()
@@ -37,12 +43,13 @@ public class WebSecurityConfig {
 					.logoutUrl("/logout").invalidateHttpSession(true).logoutSuccessUrl("/login").permitAll()
 			
 			)
-			.csrf().csrfTokenRepository(repository)
+//			.csrf().csrfTokenRepository(repository)
+//			.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 			;
 
 		return http.build();
 	}
-	//@formatter:on
+	// @formatter:on
 
 	@Bean
 	public UserDetailsService userDetailsService() {

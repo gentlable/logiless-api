@@ -19,4 +19,9 @@ public class SetItem {
 	@NotBlank
 	@Pattern(regexp = "^[0-9]{4}$")
 	private String tenpoCode;
+
+	/**
+	 * セット商品マスタ選択用チェックボックス
+	 */
+	private boolean check;
 }

@@ -9,57 +9,70 @@
 	<main>
 		<div class="container">
 			<div class="container">
-				<form class="row g-3">
+				<form class="row g-3" th:action="@{'/setItem/master/list'}">
 					<div class="col-4">
-						<label for="tenpo" class="form-label" th:text="店舗"></label>
+						<label for="tenpo" class="form-label" th:text="#{text.tenpo}"></label>
 						<select id="tenpo" name="tenpoCode" class="form-select">
 							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}">
 							</option>
 						</select>
 					</div>
 					<div class="col-4">
-						<label for="setItemCode" class="form-label" th:text="セット商品ＣＤ"></label>
+						<label for="setItemCode" class="form-label" th:text="#{text.setItemCd}"></label>
 						<input type="text" class="form-control" id="setItemCode" name="setItemCode"
-							th:value="${setItemCode}" placeholder="1234567890">
+							th:value="${setItemCode}" placeholder="1234567890" maxlength="10">
 					</div>
 					<div class="col-4">
-						<label for="setItemName" class="form-label" th:text="セット商品名"></label>
+						<label for="setItemName" class="form-label" th:text="#{text.setItemName}"></label>
 						<input type="text" class="form-control" id="setItemName" name="setItemName"
 							th:value="${setItemName}" placeholder="キリンセット">
 					</div>
 					<div class="col-2">
-						<button type="submit" class="btn btn-dark">検索</button>
+						<button type="submit" class="btn btn-dark" name="mode" th:text="#{text.search}"
+							value="search"></button>
 					</div>
 					<div class="col-2">
-						<button type="submit" class="btn btn-dark">CSV出力</button>
+						<button type="submit" class="btn btn-dark" name="csv" th:text="#{text.csvExport}"
+							value="csv"></button>
 					</div>
 				</form>
 			</div>
 			<div class="container mt-1">
-				<form>
+				<form method="post" th:object="${setItemListForm}" th:action="@{'/setItem/master/delete'}">
 					<div class="container mb-4 overflow-auto" style="height:55vh;">
 						<table class="table">
 							<thead class="sticky-top">
 								<tr>
-									<th scope="col" class="text-center delete-th">削除</th>
-									<th scope="col" class="text-center no-th">項番</th>
-									<th scope="col" class="text-center tenpo-th">店舗コード</th>
-									<th scope="col" class="text-center set-item-code-th">セット商品コード</th>
-									<th scope="col" class="text-center set-item-name-th">セット商品名</th>
+									<th scope="col" class="text-center delete-th" th:text="#{text.delete}"></th>
+									<th scope="col" class="text-center no-th" th:text="#{text.no}"></th>
+									<th scope="col" class="text-center tenpo-th" th:text="#{text.tenpoCode}"></th>
+									<th scope="col" class="text-center set-item-code-th" th:text="#{text.setItemCode}">
+									</th>
+									<th scope="col" class="text-center set-item-name-th" th:text="#{text.setItemName}">
+									</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="edit" th:each="result, i : ${resultList}">
+								<tr class="edit" th:each="setItem, st : *{setItemList}">
 									<td class="text-center click-check">
-										<input class="form-check-input" type="checkbox" value="">
+										<input class="form-check-input" type="checkbox" th:field="*{setItemList[__${st.index}__].check}">
 									</td>
-									<th class="text-center" th:text="${i.count}" scope="row"></th>
-									<td class="text-center" th:text="${result.tenpoCode}"></td>
-									<td class="text-center setItemCode">
-										<a href="#" th:text="${result.code}"
-											th:href="@{/setItem/master/detail(tenpoCode=${result.tenpoCode},setItemCode=${result.code})}"></a>
+									<th class="text-center" scope="row">
+										<span th:text="${st.count}"></span>
+									</th>
+									<td class="text-center">
+										<span th:text="${setItem.tenpoCode}"></span>
+										<input type="hidden" th:field="*{setItemList[__${st.index}__].tenpoCode}" />
 									</td>
-									<td class="" th:text="${result.name}"></td>
+									<td class="text-center">
+										<a href="#" th:text="${setItem.code}"
+											th:href="@{/setItem/master/detail(tenpoCode=${setItem.tenpoCode},setItemCode=${setItem.code})}"></a>
+										<input type="hidden" th:field="*{setItemList[__${st.index}__].code}" />
+									</td>
+									<td class="">
+										<span th:text="${setItem.name}"></span>
+										<input type="hidden" th:field="*{setItemList[__${st.index}__].name}" />
+									</td>
 								</tr>
 							</tbody>
 						</table>
@@ -67,22 +80,23 @@
 					<div class="container">
 						<div class="row">
 							<div class="col-2">
-								<button type="button" class="btn btn-dark" id="selectAllBtn"
-									onclick="checkAll(true)">全選択</button>
+								<button type="button" class="btn btn-dark" id="selectAllBtn" onclick="checkAll(true)"
+									th:text="#{text.selectAll}"></button>
 							</div>
 							<div class="col-2">
-								<button type="button" class="btn btn-dark" id="clearAllBtn"
-									onclick="checkAll(false)">全解除</button>
+								<button type="button" class="btn btn-dark" id="clearAllBtn" onclick="checkAll(false)"
+									th:text="#{text.unselectAll}"></button>
 							</div>
 							<div class="col-2">
 								<button type="button" class="btn btn-dark"
-									onclick="location.href='/setItem/master/detail'">追加</button>
+									onclick="location.href='/setItem/master/detail'" th:text="#{text.add}"></button>
 							</div>
 							<div class="col-2">
-								<button type="submit" class="btn btn-dark">削除</button>
+								<button type="submit" class="btn btn-dark" th:text="#{text.delete}"></button>
 							</div>
 							<div class="col-2">
-								<button type="button" class="btn btn-dark" onclick="location.href='/'">戻る</button>
+								<button type="button" class="btn btn-dark" onclick="location.href='/'"
+									th:text="#{text.back}"></button>
 							</div>
 						</div>
 					</div>
