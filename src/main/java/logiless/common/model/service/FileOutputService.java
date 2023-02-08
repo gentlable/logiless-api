@@ -32,7 +32,7 @@ public class FileOutputService {
 
 		try {
 
-			fo = new FileOutputStream(OUTPUT_DIR + "/" + filename + ".csv", true);
+			fo = new FileOutputStream(OUTPUT_DIR + "/" + filename, true);
 			osw = new OutputStreamWriter(fo, "MS932");
 			bw = new BufferedWriter(osw);
 

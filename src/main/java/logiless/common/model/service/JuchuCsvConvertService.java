@@ -559,7 +559,7 @@ public class JuchuCsvConvertService {
 						BeanUtils.copyProperties(rec, newRec);
 
 						newRec.setIsChild("9");
-						newRec.setTnk(baraItem.getPrice() + "");
+						newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
 						newRec.setOyaSyohnCd(baraItem.getSetItemCode());
 
 						newJuchuMesiList.add(newRec);
@@ -579,7 +579,7 @@ public class JuchuCsvConvertService {
 					newRec.setQuantity(baraItem.getQuantity() + "");
 					newRec.setIsParent("0");
 					newRec.setIsChild("9");
-					newRec.setTnk(baraItem.getPrice() + "");
+					newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
 					newRec.setOyaSyohnCd(baraItem.getSetItemCode());
 
 					newJuchuMesiList.add(newRec);
@@ -647,7 +647,7 @@ public class JuchuCsvConvertService {
 						BeanUtils.copyProperties(rec, newRec);
 
 						newRec.setIsChild("9");
-						newRec.setTnk(baraItem.getPrice() + "");
+						newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
 						newRec.setOyaSyohnCd(baraItem.getSetItemCode());
 
 						newJuchuMesiList.add(newRec);
@@ -667,7 +667,7 @@ public class JuchuCsvConvertService {
 					newRec.setQuantity(baraItem.getQuantity() + "");
 					newRec.setIsParent("0");
 					newRec.setIsChild("9");
-					newRec.setTnk(baraItem.getPrice() + "");
+					newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
 					newRec.setOyaSyohnCd(baraItem.getSetItemCode());
 
 					newJuchuMesiList.add(newRec);
@@ -713,7 +713,7 @@ public class JuchuCsvConvertService {
 						BeanUtils.copyProperties(rec, newRec);
 
 						newRec.setIsChild("9");
-						newRec.setTnk(baraItem.getPrice() + "");
+						newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
 						newRec.setOyaSyohnCd(baraItem.getSetItemCode());
 
 						newJuchuMesiList.add(newRec);
@@ -733,7 +733,7 @@ public class JuchuCsvConvertService {
 					newRec.setQuantity(baraItem.getQuantity() + "");
 					newRec.setIsParent("0");
 					newRec.setIsChild("9");
-					newRec.setTnk(baraItem.getPrice() + "");
+					newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
 					newRec.setOyaSyohnCd(baraItem.getSetItemCode());
 
 					newJuchuMesiList.add(newRec);

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import logiless.common.model.dto.common.SessionComponent;
 import logiless.common.model.service.LogilessApiService;
-import logiless.web.model.service.OAuth2Service;
+import logiless.common.model.service.OAuthService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -26,11 +26,11 @@ public class ScheduledTasksAPI {
 	private final SessionComponent sessionComponent;
 	private final MessageSource messageSource;
 	private final LogilessApiService logilessApiService;
-	private final OAuth2Service oauth2Service;
+	private final OAuthService oauth2Service;
 
 	@Autowired
 	public ScheduledTasksAPI(SessionComponent sessionComponent, MessageSource messageSource,
-			LogilessApiService logilessApiService, OAuth2Service oauth2Service) {
+			LogilessApiService logilessApiService, OAuthService oauth2Service) {
 		this.sessionComponent = sessionComponent;
 		this.messageSource = messageSource;
 		this.logilessApiService = logilessApiService;
