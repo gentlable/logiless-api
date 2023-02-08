@@ -18,7 +18,5 @@ public class SessionComponent implements Serializable {
 	private static final long serialVersionUID = -8419277060363935532L;
 
 	private String username = "廣海 真吾";
-	private String accessToken;
-	private String refreshToken;
 
 }

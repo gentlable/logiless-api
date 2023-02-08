@@ -22,26 +22,26 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import logiless.common.model.dto.common.LogilessResponse;
-import logiless.common.model.dto.common.SessionComponent;
 import logiless.common.model.dto.juchu.JuchuCsv;
 import logiless.common.model.dto.juchu.JuchuDenpyo;
-import logiless.web.model.service.OAuth2Service;
 
 @Service
 public class LogilessApiService {
 
-	private final SessionComponent sessionComponent;
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 	private final JuchuCsvConvertService juchuCsvConvertService;
 	private final FileOutputService fileOutputService;
-	private final OAuth2Service oauth2Service;
+	private final OAuthService oAuthService;
+	private final OAuthTokenService oAuthTokenService;
 
 	@Autowired
-	public LogilessApiService(SessionComponent sessionComponent, JuchuCsvConvertService juchuCsvConvertService,
-			FileOutputService fileOutputService, OAuth2Service oauth2Service) {
-		this.sessionComponent = sessionComponent;
+	public LogilessApiService(JuchuCsvConvertService juchuCsvConvertService, FileOutputService fileOutputService,
+			OAuthService oAuthService, OAuthTokenService oAuthTokenService) {
 		this.juchuCsvConvertService = juchuCsvConvertService;
 		this.fileOutputService = fileOutputService;
-		this.oauth2Service = oauth2Service;
+		this.oAuthService = oAuthService;
+		this.oAuthTokenService = oAuthTokenService;
 	}
 
 	private static final String API_ENDPOINT = "https://app2.logiless.com/api/v1/merchant/{merchant_id}";
@@ -50,17 +50,16 @@ public class LogilessApiService {
 	private static final String FINISH_TIME = "15:30:00";
 
 	/**
-	 * 受注伝票データを取得（出荷実績）
+	 * 出荷実績を取得
+	 * 
+	 * @param syoriDt
+	 * @param tenpoCd
+	 * @return
 	 */
-	public boolean getJuchu(String syoriDt, String tenpoCd) {
-
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		LocalDate date = null;
+	public boolean getJuchu(LocalDate syoriDt, String tenpoCd) {
 
 		if (syoriDt == null) {
-			date = LocalDate.now();
-		} else {
-			date = LocalDate.parse(syoriDt, formatter);
+			syoriDt = LocalDate.now();
 		}
 
 		String endpoint = API_ENDPOINT + "/sales_orders?limit=100";
@@ -69,14 +68,15 @@ public class LogilessApiService {
 		endpoint += "&finished_at_from={finished_at_from}"; // 出荷完了日時from
 		endpoint += "&finished_at_to={finished_at_to}"; // 出荷完了日時from
 		endpoint += "&store={store}";
-		date.format(formatter);
+		syoriDt.format(DATE_FORMATTER);
 
 		String documentStatus = "Shipped";
-		String finishedAtFrom = date.minusDays(1).format(formatter) + " " + FINISH_TIME;
-		String finishedAtTo = date.plusDays(1).format(formatter) + " " + FINISH_TIME;
+		String finishedAtFrom = syoriDt.minusDays(1).format(DATE_FORMATTER) + " " + FINISH_TIME;
+		String finishedAtTo = syoriDt.format(DATE_FORMATTER) + " " + FINISH_TIME;
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Bearer " + sessionComponent.getAccessToken());
+		headers.add("Authorization",
+				"Bearer " + oAuthTokenService.getOAuthTokenByPlatform("logiless").getAccessToken());
 
 		try {
 
@@ -129,7 +129,7 @@ public class LogilessApiService {
 
 			}
 
-			String filename = "logiless_sykkaJisseki_seikatuIchiba";
+			String filename = "CDX.STACK.FFAASSJ1";
 
 			fileOutputService.output(filename, csvMapper.writer(schema)
 					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(newJuchuDenpyoList)));
@@ -147,6 +147,18 @@ public class LogilessApiService {
 		}
 
 		return true;
+	}
+
+	/**
+	 * 受注伝票データを取得（出荷実績）
+	 * 
+	 * @param syoriDt
+	 * @param tenpoCd
+	 * @return
+	 */
+	public boolean getJuchu(String syoriDt, String tenpoCd) {
+
+		return getJuchu(LocalDate.parse(syoriDt, DATE_FORMATTER), tenpoCd);
 	}
 
 }

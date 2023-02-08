@@ -20,11 +20,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
 import logiless.common.model.dto.common.LogilessResponse;
-import logiless.common.model.dto.common.SessionComponent;
+import logiless.common.model.dto.oAuth.OAuth;
 import logiless.common.model.service.LogilessApiService;
-import logiless.web.model.dto.OAuth2;
+import logiless.common.model.service.OAuthService;
+import logiless.common.model.service.OAuthTokenService;
 import logiless.web.model.dto.Tenpo;
-import logiless.web.model.service.OAuth2Service;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -39,18 +39,18 @@ public class LogilessController {
 
 	private static final String merchantId = "1022";
 
-	private final SessionComponent sessionComponent;
 	private final MessageSource messageSource;
 	private final LogilessApiService logilessApiService;
-	private final OAuth2Service oauth2Service;
+	private final OAuthService oauth2Service;
+	private final OAuthTokenService oAuthTokenService;
 
 	@Autowired
-	public LogilessController(SessionComponent sessionComponent, MessageSource messageSource,
-			LogilessApiService logilessApiService, OAuth2Service oauth2Service) {
-		this.sessionComponent = sessionComponent;
+	public LogilessController(MessageSource messageSource, LogilessApiService logilessApiService,
+			OAuthService oauth2Service, OAuthTokenService oAuthTokenService) {
 		this.messageSource = messageSource;
 		this.logilessApiService = logilessApiService;
 		this.oauth2Service = oauth2Service;
+		this.oAuthTokenService = oAuthTokenService;
 	}
 
 	/**
@@ -105,11 +105,8 @@ public class LogilessController {
 	@GetMapping("/logiless/getOAuth2")
 	public String logilessGetOAuth2(@RequestParam("code") String code, Model model) {
 
-		ResponseEntity<OAuth2> res = oauth2Service.getOAuth2(code);
+		ResponseEntity<OAuth> res = oauth2Service.getOAuth2(code);
 		model.addAttribute("statusCode", res.getStatusCode());
-
-		sessionComponent.setAccessToken(res.getBody().getAccessToken());
-		sessionComponent.setRefreshToken(res.getBody().getRefreshToken());
 
 		return "logiless/getOAuth2";
 	}
@@ -126,9 +123,6 @@ public class LogilessController {
 		if (!oauth2Service.refreshToken()) {
 			return "logiless/index";
 		}
-
-		sessionComponent.setAccessToken(sessionComponent.getAccessToken());
-		sessionComponent.setRefreshToken(sessionComponent.getRefreshToken());
 
 		return "logiless/getOAuth2";
 	}
@@ -148,7 +142,8 @@ public class LogilessController {
 		final String endpoint = "https://app2.logiless.com/api/v1/merchant/{merchant_id}/stores";
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Bearer " + sessionComponent.getAccessToken());
+		headers.add("Authorization",
+				"Bearer " + oAuthTokenService.getOAuthTokenByPlatform("logiless").getAccessToken());
 		try {
 			// リクエスト情報の作成
 			RequestEntity<?> req = RequestEntity.get(endpoint, merchantId).headers(headers).build();
@@ -186,6 +181,12 @@ public class LogilessController {
 		}
 	}
 
+	/**
+	 * 出荷実績を取得する画面へ遷移
+	 * 
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/logiless/salesOrders")
 	public String logilessSalesOrders(Model model) {
 
@@ -197,8 +198,15 @@ public class LogilessController {
 		return "logiless/salesOrders";
 	}
 
+	/**
+	 * 出荷実績を取得する処理
+	 * 
+	 * @param model
+	 * @param syoriDt
+	 * @return
+	 */
 	@GetMapping("/logiless/api/get/salesOrders")
-	public String logilessApiGetSalesOrders(Model model, @RequestParam("syoriDt") String syoriDt, boolean... bs) {
+	public String logilessApiGetSalesOrders(Model model, @RequestParam("syoriDt") String syoriDt) {
 
 		boolean res = logilessApiService.getJuchu(syoriDt, "3901");
 

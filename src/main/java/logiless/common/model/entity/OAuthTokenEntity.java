@@ -10,19 +10,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "API_CODE_MASTER")
+@Table(name = "API_T_OAUTH_TOKEN")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CodeMasterEntity {
+public class OAuthTokenEntity {
 
 	@Id
-	private String categoryCd;
+	private long id;
 
-	private String categoryName;
+	private String platform;
 
-	private String outputCd;
+	private String accessToken;
 
-	private String outputName;
+	private String refreshToken;
+
 }

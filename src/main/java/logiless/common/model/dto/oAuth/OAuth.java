@@ -1,4 +1,4 @@
-package logiless.web.model.dto;
+package logiless.common.model.dto.oAuth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OAuth2 {
+public class OAuth {
 
 	@JsonProperty("access_token")
 	private String accessToken;
