@@ -659,6 +659,7 @@ public class JuchuCsvConvertService {
 				}
 
 				if (!existFlg) {
+
 					JuchuMesi newRec = new JuchuMesi();
 					BeanUtils.copyProperties(juchuMesi, newRec);
 
@@ -725,6 +726,7 @@ public class JuchuCsvConvertService {
 				}
 
 				if (!existFlg) {
+
 					JuchuMesi newRec = new JuchuMesi();
 					BeanUtils.copyProperties(juchuMesi, newRec);
 
