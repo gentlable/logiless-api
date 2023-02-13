@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
@@ -118,7 +119,8 @@ public class SetItemService {
 
 		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.contains());
 
-		List<SetItemEntity> entityList = setItemRepository.findAll(Example.of(e, matcher));
+		List<SetItemEntity> entityList = setItemRepository.findAll(Example.of(e, matcher),
+				Sort.by(Sort.Direction.ASC, "code"));
 		List<SetItem> setItemList = new ArrayList<SetItem>();
 		for (SetItemEntity entity : entityList) {
 			SetItem setItem = new SetItem();
