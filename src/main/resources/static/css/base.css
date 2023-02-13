@@ -9,3 +9,23 @@ thead {
 tbody tr:hover {
 	background: #f8f9fa;
 }
+
+.ime-off {
+	ime-mode: inactive;
+}
+
+.ime-on {
+	ime-mode: active;
+}
+
+/* input numberの矢印を消す */
+/* Chrome/Safari */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}

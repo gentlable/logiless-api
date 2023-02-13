@@ -21,7 +21,7 @@
 					</div>
 					<div class="col-4">
 						<label for="setItemCode" class="form-label" th:text="#{text.setItemCd}"></label>
-						<input type="text" class="form-control" th:field="*{setItem.code}" placeholder="0123456789"
+						<input type="number" class="form-control" th:field="*{setItem.code}" placeholder="0123456789"
 							th:readonly="${editFlg}" maxlength="10">
 					</div>
 					<div class="col-4">
