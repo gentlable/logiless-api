@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import logiless.web.model.entity.primarykey.BaraItemPKEntity;
 import lombok.Getter;
@@ -30,5 +31,8 @@ public class BaraItemEntity {
 	private int quantity;
 
 	private double price;
+
+	@Version
+	private long version;
 
 }

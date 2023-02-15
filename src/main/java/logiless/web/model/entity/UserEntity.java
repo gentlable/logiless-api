@@ -3,6 +3,7 @@ package logiless.web.model.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +22,8 @@ public class UserEntity {
 	private String password;
 
 	private String roles;
+
+	@Version
+	private long version;
 
 }

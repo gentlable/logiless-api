@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import logiless.web.model.entity.primarykey.SetItemPKEntity;
 import lombok.Getter;
@@ -23,5 +24,8 @@ public class SetItemEntity {
 
 	@Id
 	private String tenpoCode;
+
+	@Version
+	private long version;
 
 }
