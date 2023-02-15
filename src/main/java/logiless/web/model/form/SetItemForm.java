@@ -13,8 +13,11 @@ import lombok.Setter;
 @Setter
 public class SetItemForm {
 
+	private String tenpoName;
+
 	@Valid
 	private SetItem setItem;
+
 	@Valid
 	private List<BaraItem> baraItemList;
 

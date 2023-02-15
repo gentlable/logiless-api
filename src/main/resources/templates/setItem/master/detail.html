@@ -18,7 +18,8 @@
 						</select>
 						<span th:if="${setItemForm.editFlg}">
 							<input type="hidden" class="form-control" th:field="*{setItem.tenpoCode}">
-							<input type="text" class="form-control" th:value="${tenpoName}" th:readonly="${setItemForm.editFlg}">
+							<input type="text" class="form-control" th:value="*{tenpoName}"
+								th:readonly="${setItemForm.editFlg}">
 						</span>
 					</div>
 					<div class="col-4">
@@ -30,6 +31,9 @@
 						<label for="setItemName" class="form-label" th:text="#{text.setItemName}"></label>
 						<input type="text" class="form-control" th:field="*{setItem.name}" placeholder="キリンセット">
 					</div>
+					<span class="error" th:if="${#fields.hasErrors('setItem.tenpoCode')}"
+						th:errors="*{setItem.tenpoCode}"></span>
+					<span class="error" th:if="${#fields.hasErrors('setItem.code')}" th:errors="*{setItem.code}"></span>
 					<div class="container mb-4 overflow-auto">
 						<table class="table">
 							<thead class="sticky-top">
@@ -50,6 +54,8 @@
 									<td>
 										<input type="text" class="form-control"
 											th:field="*{baraItemList[__${st.index}__].code}" maxlength="10" />
+										<span class="error" th:if="${#fields.hasErrors('baraItemList[__${st.index}__].code')}"
+											th:errors="*{baraItemList[__${st.index}__].code}"></span>
 									</td>
 									<td>
 										<input type="text" class="form-control"
@@ -77,8 +83,8 @@
 								<button type="submit" class="btn btn-dark" th:text="#{text.confirm}"></button>
 							</div>
 							<div class="col-2">
-								<button type="button" class="btn btn-dark"
-									onclick="history.back()" th:text="#{text.back}"></button>
+								<button type="button" class="btn btn-dark" onclick="history.back()"
+									th:text="#{text.back}"></button>
 							</div>
 						</div>
 					</div>

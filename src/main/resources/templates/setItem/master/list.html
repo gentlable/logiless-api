@@ -12,9 +12,8 @@
 				<form class="row g-3" th:action="@{'/setItem/master/list'}" th:object="${setItemSearchForm}">
 					<div class="col-4">
 						<label for="tenpo" class="form-label" th:text="#{text.tenpo}"></label>
-						<select id="tenpo" name="tenpoCode" class="form-select">
-							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}"
-								th:field="*{tenpoCode}">
+						<select id="tenpo" name="tenpoCode" class="form-select" th:field="*{tenpoCode}">
+							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}">
 							</option>
 						</select>
 					</div>
@@ -28,8 +27,8 @@
 						<input type="text" class="form-control ime-on" id="setItemName" name="setItemName"
 							th:field="*{setItemName}" placeholder="キリンセット">
 					</div>
-					<span class="error"th:if="${#fields.hasErrors('tenpoCode')}" th:errors="*{tenpoCode}"></span>
-					<span class="error"th:if="${#fields.hasErrors('setItemCode')}" th:errors="*{setItemCode}"></span>
+					<span class="error" th:if="${#fields.hasErrors('tenpoCode')}" th:errors="*{tenpoCode}"></span>
+					<span class="error" th:if="${#fields.hasErrors('setItemCode')}" th:errors="*{setItemCode}"></span>
 					<div class="col-2">
 						<button type="submit" class="btn btn-dark" name="mode" th:text="#{text.search}"
 							value="search"></button>

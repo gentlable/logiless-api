@@ -34,7 +34,7 @@ import logiless.web.model.service.SetItemService;
  *
  */
 @Controller
-@SessionAttributes(value = { "tenpoList" })
+@SessionAttributes(value = { "tenpoList", "setItemForm" })
 public class SetItemController {
 
 	private final SetItemService setItemService;
@@ -54,8 +54,13 @@ public class SetItemController {
 		return setItemService.getAllTenpoList();
 	}
 
+	@ModelAttribute(value = "setItemForm")
+	public SetItemForm createSetItemForm() {
+		return new SetItemForm();
+	}
+
 	@ModelAttribute(value = "setItemSearchForm")
-	public SetItemSearchForm createSeywordForm() {
+	public SetItemSearchForm createSetItemSearchForm() {
 		return new SetItemSearchForm();
 	}
 
@@ -90,7 +95,6 @@ public class SetItemController {
 			BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
-
 			SetItemListForm setItemListForm = new SetItemListForm();
 			setItemListForm.setSetItemList(new ArrayList<SetItem>());
 			model.addAttribute("setItemListForm", setItemListForm);
@@ -136,7 +140,7 @@ public class SetItemController {
 
 			for (Tenpo tenpo : tenpoList) {
 				if (tenpoCode.equals(tenpo.getCode())) {
-					model.addAttribute("tenpoName", tenpo.getName());
+					setItemForm.setTenpoName(tenpo.getName());
 					break;
 				}
 			}
@@ -156,11 +160,17 @@ public class SetItemController {
 	 * @return
 	 */
 	@PostMapping("/setItem/master/submit")
-	public String setItemMasterSubmit(Model model, @Param("setItemForm") SetItemForm setItemForm) {
+	public String setItemMasterSubmit(Model model, @Valid @ModelAttribute("setItemForm") SetItemForm setItemForm,
+			BindingResult bindingResult) {
+
+		if (bindingResult.hasErrors()) {
+			return "setItem/master/detail";
+		}
 
 		boolean result = setItemService.updateSetItem(setItemForm);
 		if (!result) {
 			model.addAttribute("message", "エラー：登録に失敗しました。");
+			return "setItem/master/detail";
 		} else {
 			model.addAttribute("message", "登録が完了しました");
 		}
@@ -181,6 +191,7 @@ public class SetItemController {
 		boolean result = setItemService.deleteSetItem(setItemListForm);
 		if (!result) {
 			model.addAttribute("message", "エラー登録に失敗しました。");
+			return "setItem/master/list";
 		} else {
 			model.addAttribute("message", "登録が完了しました");
 		}

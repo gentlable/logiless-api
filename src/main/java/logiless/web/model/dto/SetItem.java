@@ -1,6 +1,6 @@
 package logiless.web.model.dto;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 import lombok.Getter;
@@ -9,14 +9,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SetItem {
-	@NotBlank
-	@Pattern(regexp = "^[0-9]{10}$")
+
+	@NotEmpty(message = "セット商品コードを入力してください")
+	@Pattern(regexp = "^[0-9]{10}$", message = "セット商品コードは半角数字10桁で入力してください。")
 	private String code;
 
 	private String name;
 
-	@NotBlank
-	@Pattern(regexp = "^[0-9]{4}$")
+	@NotEmpty(message = "店舗を選択してください")
+	@Pattern(regexp = "^[0-9]{4}$", message = "店舗コードは半角数字4桁で入力してください。")
 	private String tenpoCode;
 
 	/**
