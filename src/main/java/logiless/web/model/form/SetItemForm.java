@@ -12,8 +12,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SetItemForm {
+
 	@Valid
 	private SetItem setItem;
 	@Valid
 	private List<BaraItem> baraItemList;
+
+	private boolean editFlg;
 }

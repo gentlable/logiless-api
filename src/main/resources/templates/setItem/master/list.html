@@ -9,23 +9,24 @@
 	<main>
 		<div class="container">
 			<div class="container">
-				<form class="row g-3" th:action="@{'/setItem/master/list'}">
+				<form class="row g-3" th:action="@{'/setItem/master/list'}" th:object="${setItemSearchForm}">
 					<div class="col-4">
 						<label for="tenpo" class="form-label" th:text="#{text.tenpo}"></label>
 						<select id="tenpo" name="tenpoCode" class="form-select">
-							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}">
+							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}"
+								th:field="*{tenpoCode}">
 							</option>
 						</select>
 					</div>
 					<div class="col-4">
 						<label for="setItemCode" class="form-label" th:text="#{text.setItemCd}"></label>
 						<input type="number" class="form-control ime-off" id="setItemCode" name="setItemCode"
-							th:value="${setItemCode}" placeholder="1234567890" maxlength="10">
+							th:field="*{setItemCode}" placeholder="1234567890" maxlength="10">
 					</div>
 					<div class="col-4">
 						<label for="setItemName" class="form-label" th:text="#{text.setItemName}"></label>
 						<input type="text" class="form-control ime-on" id="setItemName" name="setItemName"
-							th:value="${setItemName}" placeholder="キリンセット">
+							th:field="*{setItemName}" placeholder="キリンセット">
 					</div>
 					<div class="col-2">
 						<button type="submit" class="btn btn-dark" name="mode" th:text="#{text.search}"
@@ -56,7 +57,8 @@
 							<tbody>
 								<tr class="edit" th:each="setItem, st : *{setItemList}">
 									<td class="text-center click-check">
-										<input class="form-check-input" type="checkbox" th:field="*{setItemList[__${st.index}__].check}">
+										<input class="form-check-input" type="checkbox"
+											th:field="*{setItemList[__${st.index}__].check}">
 									</td>
 									<th class="text-center" scope="row">
 										<span th:text="${st.count}"></span>

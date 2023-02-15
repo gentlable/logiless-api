@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,6 +17,7 @@ import logiless.web.model.dto.SetItem;
 import logiless.web.model.dto.Tenpo;
 import logiless.web.model.form.SetItemForm;
 import logiless.web.model.form.SetItemListForm;
+import logiless.web.model.form.SetItemSearchForm;
 import logiless.web.model.service.SetItemService;
 
 /**
@@ -25,6 +27,7 @@ import logiless.web.model.service.SetItemService;
  *
  */
 @Controller
+//@SessionAttributes(value = { "setItemSearchForm" })
 public class SetItemController {
 
 	private final SetItemService setItemService;
@@ -32,6 +35,11 @@ public class SetItemController {
 	@Autowired
 	public SetItemController(SetItemService setItemService) {
 		this.setItemService = setItemService;
+	}
+
+	@ModelAttribute(value = "setItemSearchForm")
+	public SetItemSearchForm createSeywordForm() {
+		return new SetItemSearchForm();
 	}
 
 	/**
@@ -42,30 +50,27 @@ public class SetItemController {
 	 */
 	@GetMapping("/setItem/master/list")
 	public String getSetItemMasterList(Model model,
-			@RequestParam(name = "tenpoCode", required = false) String tenpoCode,
-			@RequestParam(name = "setItemCode", required = false) String setItemCode,
-			@RequestParam(name = "setItemName", required = false) String setItemName) {
+			@ModelAttribute("setItemSearchForm") SetItemSearchForm setItemSearchForm) {
 
 		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
 		model.addAttribute("tenpoList", tenpoList);
 
 		SetItemListForm setItemListForm = new SetItemListForm();
 
-		if (tenpoCode != null) {
+		// 初期表示
+		if (setItemSearchForm.getTenpoCode() != null) {
+
+//			model.addAttribute("setItemSearchForm", new SetItemSearchForm());
 
 			setItemListForm.setSetItemList(
-					setItemService.getSetItemListByCodeAndNameLikeAndTenpoCode(setItemCode, setItemName, tenpoCode));
+					setItemService.getSetItemListByCodeAndNameLikeAndTenpoCode(setItemSearchForm.getSetItemCode(),
+							setItemSearchForm.getSetItemName(), setItemSearchForm.getTenpoCode()));
 			model.addAttribute("setItemListForm", setItemListForm);
 		} else {
 
 			setItemListForm.setSetItemList(new ArrayList<SetItem>());
 			model.addAttribute("setItemListForm", setItemListForm);
 		}
-
-		model.addAttribute("tenpoCode", tenpoCode);
-		model.addAttribute("setItemCode", setItemCode);
-		model.addAttribute("setItemName", setItemName);
-
 		return "setItem/master/list";
 	}
 
@@ -92,16 +97,19 @@ public class SetItemController {
 		baraItemList.add(new BaraItem());
 		setItemForm.setBaraItemList(baraItemList);
 
-		// 新規登録と編集を判別するためのフラグ
-		boolean editFlg = false;
-
 		if (tenpoCode != null && setItemCode != null) {
 			setItemForm.setSetItem(setItemService.getSetItemByCodeAndTenpoCode(setItemCode, tenpoCode));
 			setItemForm.setBaraItemList(setItemService.getBaraItemByTenpoCodeAndSetItemCode(tenpoCode, setItemCode));
-			editFlg = true;
+			setItemForm.setEditFlg(true);
+
+			for (Tenpo tenpo : tenpoList) {
+				if (tenpoCode.equals(tenpo.getCode())) {
+					model.addAttribute("tenpoName", tenpo.getName());
+					break;
+				}
+			}
 		}
 
-		model.addAttribute("editFlg", editFlg);
 		model.addAttribute("tenpoCode", tenpoCode);
 		model.addAttribute("setItemForm", setItemForm);
 

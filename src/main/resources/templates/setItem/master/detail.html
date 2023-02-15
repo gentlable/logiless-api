@@ -12,17 +12,19 @@
 				<form th:action="@{'/setItem/master/submit'}" class="row g-3" th:object="${setItemForm}" method="post">
 					<div class="col-4">
 						<label for="tenpo" class="form-label" th:text="#{text.tenpo}"></label>
-						<select class="form-select" th:field="*{setItem.tenpoCode}" th:if="${!editFlg}">
+						<select class="form-select" th:field="*{setItem.tenpoCode}" th:if="${!setItemForm.editFlg}">
 							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}">
 							</option>
 						</select>
-						<input type="text" class="form-control" th:field="*{setItem.tenpoCode}"
-							th:if="${editFlg}" th:readonly="${editFlg}">
+						<span th:if="${setItemForm.editFlg}">
+							<input type="hidden" class="form-control" th:field="*{setItem.tenpoCode}">
+							<input type="text" class="form-control" th:value="${tenpoName}" th:readonly="${setItemForm.editFlg}">
+						</span>
 					</div>
 					<div class="col-4">
 						<label for="setItemCode" class="form-label" th:text="#{text.setItemCd}"></label>
 						<input type="number" class="form-control" th:field="*{setItem.code}" placeholder="0123456789"
-							th:readonly="${editFlg}" maxlength="10">
+							th:readonly="${setItemForm.editFlg}" maxlength="10">
 					</div>
 					<div class="col-4">
 						<label for="setItemName" class="form-label" th:text="#{text.setItemName}"></label>
@@ -76,7 +78,7 @@
 							</div>
 							<div class="col-2">
 								<button type="button" class="btn btn-dark"
-									onclick="location.href='/setItem/master/list'" th:text="#{text.back}"></button>
+									onclick="history.back()" th:text="#{text.back}"></button>
 							</div>
 						</div>
 					</div>
