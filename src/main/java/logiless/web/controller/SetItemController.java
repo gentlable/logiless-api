@@ -3,14 +3,21 @@ package logiless.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import logiless.web.model.dto.BaraItem;
 import logiless.web.model.dto.SetItem;
@@ -27,19 +34,48 @@ import logiless.web.model.service.SetItemService;
  *
  */
 @Controller
-//@SessionAttributes(value = { "setItemSearchForm" })
+@SessionAttributes(value = { "tenpoList" })
 public class SetItemController {
 
 	private final SetItemService setItemService;
+
+	@InitBinder
+	public void initbinder(WebDataBinder binder) {
+		binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+	}
 
 	@Autowired
 	public SetItemController(SetItemService setItemService) {
 		this.setItemService = setItemService;
 	}
 
+	@ModelAttribute(value = "tenpoList")
+	public List<Tenpo> createTenpoList() {
+		return setItemService.getAllTenpoList();
+	}
+
 	@ModelAttribute(value = "setItemSearchForm")
 	public SetItemSearchForm createSeywordForm() {
 		return new SetItemSearchForm();
+	}
+
+	/**
+	 * セット商品マスター画面初期表示
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/setItem/master/list/init")
+	public String getSetItemMasterListInit(Model model,
+			@ModelAttribute("setItemSearchForm") SetItemSearchForm setItemSearchForm) {
+
+		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
+		model.addAttribute("tenpoList", tenpoList);
+
+		SetItemListForm setItemListForm = new SetItemListForm();
+		setItemListForm.setSetItemList(new ArrayList<SetItem>());
+		model.addAttribute("setItemListForm", setItemListForm);
+		return "setItem/master/list";
 	}
 
 	/**
@@ -50,27 +86,23 @@ public class SetItemController {
 	 */
 	@GetMapping("/setItem/master/list")
 	public String getSetItemMasterList(Model model,
-			@ModelAttribute("setItemSearchForm") SetItemSearchForm setItemSearchForm) {
+			@Valid @ModelAttribute("setItemSearchForm") SetItemSearchForm setItemSearchForm,
+			BindingResult bindingResult) {
 
-		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
-		model.addAttribute("tenpoList", tenpoList);
+		if (bindingResult.hasErrors()) {
+
+			SetItemListForm setItemListForm = new SetItemListForm();
+			setItemListForm.setSetItemList(new ArrayList<SetItem>());
+			model.addAttribute("setItemListForm", setItemListForm);
+			return "setItem/master/list";
+		}
 
 		SetItemListForm setItemListForm = new SetItemListForm();
 
-		// 初期表示
-		if (setItemSearchForm.getTenpoCode() != null) {
-
-//			model.addAttribute("setItemSearchForm", new SetItemSearchForm());
-
-			setItemListForm.setSetItemList(
-					setItemService.getSetItemListByCodeAndNameLikeAndTenpoCode(setItemSearchForm.getSetItemCode(),
-							setItemSearchForm.getSetItemName(), setItemSearchForm.getTenpoCode()));
-			model.addAttribute("setItemListForm", setItemListForm);
-		} else {
-
-			setItemListForm.setSetItemList(new ArrayList<SetItem>());
-			model.addAttribute("setItemListForm", setItemListForm);
-		}
+		setItemListForm.setSetItemList(
+				setItemService.getSetItemListByCodeAndNameLikeAndTenpoCode(setItemSearchForm.getSetItemCode(),
+						setItemSearchForm.getSetItemName(), setItemSearchForm.getTenpoCode()));
+		model.addAttribute("setItemListForm", setItemListForm);
 		return "setItem/master/list";
 	}
 
@@ -89,8 +121,8 @@ public class SetItemController {
 			@RequestParam(name = "setItemCode", required = false) String setItemCode,
 			@RequestParam(name = "tenpoCode", required = false) String tenpoCode) {
 
-		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
-		model.addAttribute("tenpoList", tenpoList);
+		@SuppressWarnings("unchecked")
+		List<Tenpo> tenpoList = (List<Tenpo>) model.getAttribute("tenpoList");
 
 		SetItemForm setItemForm = new SetItemForm();
 		List<BaraItem> baraItemList = new ArrayList<BaraItem>();
@@ -133,9 +165,6 @@ public class SetItemController {
 			model.addAttribute("message", "登録が完了しました");
 		}
 
-		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
-		model.addAttribute("tenpoList", tenpoList);
-
 		return "redirect:/setItem/master/list";
 	}
 
@@ -155,9 +184,6 @@ public class SetItemController {
 		} else {
 			model.addAttribute("message", "登録が完了しました");
 		}
-
-		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
-		model.addAttribute("tenpoList", tenpoList);
 
 		return "redirect:/setItem/master/list";
 	}

@@ -15,7 +15,6 @@ public class BaraItem {
 	@Pattern(regexp = "^[0-9]{10}$")
 	private String code;
 
-	@NotBlank
 	private String name;
 
 	@NotBlank
