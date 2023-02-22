@@ -7,9 +7,11 @@
 	<div th:replace="common/header :: header_fragment(title='エラー画面')"></div>
 	<main>
 		<div class="container">
-			<h1>エラー</h1>
-			<p th:text="${test}">test</p>
-			<h1>エラー</h1>
+			<h1>システムエラー</h1>
+			<h3>情報統括部へご連絡ください。</h3>
+			<p th:text="${errorCode}">システムエラー</p>
+			<p th:text="${errorMessage}">システムエラー</p>
+			
 		</div>
 	</main>
 </body>

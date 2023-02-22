@@ -15,8 +15,6 @@ import lombok.Setter;
 public class UserEntity {
 
 	@Id
-	private String id;
-
 	private String name;
 
 	private String password;
