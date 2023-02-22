@@ -25,12 +25,14 @@
 					<div class="col-4">
 						<label for="setItemCode" class="form-label" th:text="#{text.setItemCd}"></label>
 						<input type="number" class="form-control" th:field="*{setItem.code}" placeholder="0123456789"
-							th:readonly="${setItemForm.editFlg}" maxlength="10">
+							th:readonly="${setItemForm.editFlg}" maxlength="10"
+							oninput="javascript:if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
 					</div>
 					<div class="col-4">
 						<label for="setItemName" class="form-label" th:text="#{text.setItemName}"></label>
 						<input type="text" class="form-control" th:field="*{setItem.name}" placeholder="キリンセット">
 					</div>
+					<span class="error" th:text="${message}"></span>
 					<span class="error" th:if="${#fields.hasErrors('setItem.tenpoCode')}"
 						th:errors="*{setItem.tenpoCode}"></span>
 					<span class="error" th:if="${#fields.hasErrors('setItem.code')}" th:errors="*{setItem.code}"></span>
@@ -53,8 +55,10 @@
 									</td>
 									<td>
 										<input type="text" class="form-control"
-											th:field="*{baraItemList[__${st.index}__].code}" maxlength="10" />
-										<span class="error" th:if="${#fields.hasErrors('baraItemList[__${st.index}__].code')}"
+											th:field="*{baraItemList[__${st.index}__].code}" maxlength="10"
+											oninput="javascript:if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
+										<span class="error"
+											th:if="${#fields.hasErrors('baraItemList[__${st.index}__].code')}"
 											th:errors="*{baraItemList[__${st.index}__].code}"></span>
 									</td>
 									<td>
@@ -63,11 +67,12 @@
 									</td>
 									<td>
 										<input type="number" class="form-control"
-											th:field="*{baraItemList[__${st.index}__].quantity}" />
+											th:field="*{baraItemList[__${st.index}__].quantity}" min="0" max="99999" />
 									</td>
 									<td>
 										<input type="number" step="0.01" class="form-control"
-											th:field="*{baraItemList[__${st.index}__].price}" />
+											th:field="*{baraItemList[__${st.index}__].price}" min="0"
+											max="99999999.99" />
 									</td>
 								</tr>
 							</tbody>
@@ -128,6 +133,8 @@
 			newCode.type = "text"
 			newCode.id = label + num + ".code"
 			newCode.name = label + "[" + num + "]" + ".code"
+			newCode.setAttribute("maxlength", "10")
+			newCode.setAttribute("oninput", "javascript:if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);")
 
 			tdCode.appendChild(newCode)
 			newRow.appendChild(tdCode)
@@ -145,9 +152,13 @@
 			let tdQuantity = document.createElement("td")
 			let newQuantity = document.createElement("input")
 			newQuantity.className = "form-control"
-			newQuantity.type = "text"
+			newQuantity.type = "number"
 			newQuantity.id = label + num + ".quantity"
 			newQuantity.name = label + "[" + num + "]" + ".quantity"
+			newQuantity.value = 0
+			newQuantity.setAttribute("min", "0")
+			newQuantity.setAttribute("max", "99999")
+			
 
 			tdQuantity.appendChild(newQuantity)
 			newRow.appendChild(tdQuantity)
@@ -155,9 +166,13 @@
 			let tdPrice = document.createElement("td")
 			let newPrice = document.createElement("input")
 			newPrice.className = "form-control"
-			newPrice.type = "text"
+			newPrice.type = "number"
 			newPrice.id = label + num + ".price"
 			newPrice.name = label + "[" + num + "]" + ".price"
+			newPrice.setAttribute("step", "0.01")
+			newPrice.value = 0.0
+			newPrice.setAttribute("min", "0")
+			newPrice.setAttribute("max", "99999999.99")
 
 			tdPrice.appendChild(newPrice)
 			newRow.appendChild(tdPrice)

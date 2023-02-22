@@ -1,1 +1,29 @@
-セット商品一括アップロード、登録画面
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment"></head>
+
+<body>
+	<div th:replace="common/header :: header_fragment(title='セット商品一括アップロード登録画面')"></div>
+	<main>
+		<div class="container">
+			<div class="container">
+				<form action="#" th:action="@{/setItem/upload/submit}" class="row g-3" method="post"
+					enctype="multipart/form-data" th:object="${setItemUploadForm}">
+					<div class="col-4">
+						<p th:text="'File to upload:'"></p>
+						<input type="file" th:field="*{file}" />
+					</div>
+					<div>
+						<p class="error" th:if="${#fields.hasErrors('file')}" th:errors="*{file}"></p>
+						<button type="submit" class="btn btn-light btn-lg" th:text="upload"></button>
+						<button type="button" class="btn btn-dark" onclick="location.href='/'"
+							th:text="#{text.back}"></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+</body>
+
+</html>

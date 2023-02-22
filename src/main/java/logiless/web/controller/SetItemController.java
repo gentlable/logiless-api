@@ -1,30 +1,41 @@
 package logiless.web.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import logiless.web.com.storage.StorageFileNotFoundException;
 import logiless.web.model.dto.BaraItem;
 import logiless.web.model.dto.SetItem;
+import logiless.web.model.dto.SetItem.InsertData;
+import logiless.web.model.dto.SetItem.UpdateData;
 import logiless.web.model.dto.Tenpo;
 import logiless.web.model.form.SetItemForm;
 import logiless.web.model.form.SetItemListForm;
 import logiless.web.model.form.SetItemSearchForm;
+import logiless.web.model.form.SetItemUploadForm;
 import logiless.web.model.service.SetItemService;
 
 /**
@@ -37,6 +48,7 @@ import logiless.web.model.service.SetItemService;
 @SessionAttributes(value = { "tenpoList", "setItemForm" })
 public class SetItemController {
 
+	private final Validator validator;
 	private final SetItemService setItemService;
 
 	@InitBinder
@@ -45,7 +57,8 @@ public class SetItemController {
 	}
 
 	@Autowired
-	public SetItemController(SetItemService setItemService) {
+	public SetItemController(Validator validator, SetItemService setItemService) {
+		this.validator = validator;
 		this.setItemService = setItemService;
 	}
 
@@ -62,6 +75,11 @@ public class SetItemController {
 	@ModelAttribute(value = "setItemSearchForm")
 	public SetItemSearchForm createSetItemSearchForm() {
 		return new SetItemSearchForm();
+	}
+
+	@ModelAttribute(value = "setItemUploadForm")
+	public SetItemUploadForm createSetItemUploadForm() {
+		return new SetItemUploadForm();
 	}
 
 	/**
@@ -163,8 +181,27 @@ public class SetItemController {
 	public String setItemMasterSubmit(Model model, @Valid @ModelAttribute("setItemForm") SetItemForm setItemForm,
 			BindingResult bindingResult) {
 
+		Set<ConstraintViolation<SetItemForm>> violations = new HashSet<>();
+
 		if (bindingResult.hasErrors()) {
 			return "setItem/master/detail";
+		}
+
+		if (!setItemForm.isEditFlg()) {
+			violations = validator.validate(setItemForm, InsertData.class);
+		}
+
+		if (setItemForm.isEditFlg()) {
+			violations = validator.validate(setItemForm, UpdateData.class);
+		}
+
+		if (!violations.isEmpty()) {
+			// バリデーションに問題がある場合は、ログにエラーメッセージを出力する
+			for (ConstraintViolation<SetItemForm> violation : violations) {
+				String message = violation.getMessage();
+				model.addAttribute("message", message);
+				return "setItem/master/detail";
+			}
 		}
 
 		boolean result = setItemService.updateSetItem(setItemForm);
@@ -175,7 +212,7 @@ public class SetItemController {
 			model.addAttribute("message", "登録が完了しました");
 		}
 
-		return "redirect:/setItem/master/list";
+		return "redirect:/setItem/master/list/init";
 	}
 
 	/**
@@ -186,17 +223,18 @@ public class SetItemController {
 	 * @return
 	 */
 	@PostMapping("/setItem/master/delete")
-	public String setItemMasterDelete(Model model, @Param("setItemListForm") SetItemListForm setItemListForm) {
+	public String setItemMasterDelete(Model model, @Param("setItemListForm") SetItemListForm setItemListForm,
+			RedirectAttributes redirectAttributes) {
 
 		boolean result = setItemService.deleteSetItem(setItemListForm);
 		if (!result) {
-			model.addAttribute("message", "エラー登録に失敗しました。");
+			redirectAttributes.addAttribute("message", "エラー登録に失敗しました。");
 			return "setItem/master/list";
 		} else {
-			model.addAttribute("message", "登録が完了しました");
+			redirectAttributes.addAttribute("message", "登録が完了しました");
 		}
 
-		return "redirect:/setItem/master/list";
+		return "redirect:/setItem/master/list/init";
 	}
 
 	/**
@@ -210,13 +248,31 @@ public class SetItemController {
 	}
 
 	/**
-	 * * セット商品情報一括登録完了画面
+	 * セット商品情報一括登録処理
 	 * 
 	 * @return
 	 */
-	@GetMapping("/setItem/upload/complete")
-	public String setItemUploadComplete() {
+	@PostMapping("/setItem/upload/submit")
+	public String setItemUploadSubmit(Model model,
+			@Valid @ModelAttribute("setItemUploadForm") SetItemUploadForm setItemUploadForm,
+			BindingResult bindingResult) {
+
+		if (bindingResult.hasErrors()) {
+			return "setItem/upload/index";
+		}
+
+		boolean result = setItemService.uploadSetItem(setItemUploadForm);
+
+		if (!result) {
+			model.addAttribute("errorMessage", "エラーが発生しました");
+			return "setItem/upload/index";
+		}
+
 		return "setItem/upload/complete";
 	}
 
+	@ExceptionHandler(StorageFileNotFoundException.class)
+	public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
+		return ResponseEntity.notFound().build();
+	}
 }

@@ -20,7 +20,8 @@
 					<div class="col-4">
 						<label for="setItemCode" class="form-label" th:text="#{text.setItemCd}"></label>
 						<input type="number" class="form-control ime-off" id="setItemCode" name="setItemCode"
-							th:field="*{setItemCode}" placeholder="1234567890" maxlength="10">
+							th:field="*{setItemCode}" placeholder="1234567890" maxlength="10"
+							oninput="javascript:if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
 					</div>
 					<div class="col-4">
 						<label for="setItemName" class="form-label" th:text="#{text.setItemName}"></label>
