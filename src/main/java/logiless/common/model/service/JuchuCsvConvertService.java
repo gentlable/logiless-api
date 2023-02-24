@@ -34,6 +34,9 @@ public class JuchuCsvConvertService {
 	}
 
 	private static final Map<String, String> DENPYO_STATUS_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 6349087435100730576L;
+
 		{
 			put("Processing", "処理中");
 			put("WaitingForPayment", "入金待ち");
@@ -45,6 +48,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> HIKIATE_STATUS_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 1091943583040301560L;
+
 		{
 			put("WaitingForAllocation", "引当待ち");
 			put("Allocated", "引当済み");
@@ -52,6 +58,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> HAISO_STATUS_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 1602158683317758535L;
+
 		{
 			put("WaitingForShipment", "出荷待ち");
 			put("Working", "出荷作業中");
@@ -63,6 +72,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> NYUKIN_STATUS_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 5420490407063406030L;
+
 		{
 			put("NotPaid", "未入金");
 			put("PartlyPaid", "一部入金済み");
@@ -71,6 +83,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> SYONIN_STATUS_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 5759563504846349947L;
+
 		{
 			put("NotRequired", "必要なし");
 			put("Unauthorized", "未承認");
@@ -82,6 +97,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> MESI_STATUS_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = -8165111469727211630L;
+
 		{
 			put("WaitingForTransfer", "入荷待ち");
 			put("WaitingForAllocation", "引当待ち");
@@ -92,6 +110,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> HAISO_HOHO_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 6860236319945529495L;
+
 		{
 			put("yamato", "ヤマト運輸 宅急便");
 			put("yamato_compact", "ヤマト運輸 宅急便コンパクト");
@@ -158,6 +179,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> SIHARAI_HOHO_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 2681580313680172039L;
+
 		{
 			put("credit_card_payment", "クレジットカード決済");
 			put("cod", "代金引換");
@@ -193,6 +217,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> OISOGI_KB_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 7325788152854049594L;
+
 		{
 			put("SameDayDelivery", "当日便");
 			put("NextDayDelivery", "翌日便");
@@ -201,6 +228,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> HAISO_ONDO_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = -6618345290962630097L;
+
 		{
 			put("Normal", "通常");
 			put("Cold", "冷蔵");
@@ -209,6 +239,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> ZEI_KB_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 5195775963120449970L;
+
 		{
 			put("TaxExcluded", "税抜");
 			put("TaxIncluded", "税込");
@@ -217,6 +250,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> ZEI_KEISAN_JUNJO_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = -5361303167714168955L;
+
 		{
 			put("UnitByUnit", "商品単位");
 			put("LineByLine", "明細単位");
@@ -225,6 +261,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> ZEI_MARUME_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 6730513281483473862L;
+
 		{
 			put("RoundOff", "四捨五入");
 			put("RoundDown", "切り捨て");
@@ -233,6 +272,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> SYOHN_KB_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = 8437245558714894069L;
+
 		{
 			put("Single", "通常商品");
 			put("Assortment", "セット商品");
@@ -241,6 +283,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> NYUKA_YOTEI_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = -988983384647205587L;
+
 		{
 			put("WaitingForReceipt", "入荷待ち");
 			put("Received", "入荷済み");
@@ -249,6 +294,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> ZAIKO_SOSA_KB_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = -2024012759363265895L;
+
 		{
 			put("Transfer", "入荷予定");
 			put("TransferReversal", "入荷予定取消");
@@ -267,6 +315,9 @@ public class JuchuCsvConvertService {
 	};
 
 	private static final Map<String, String> ZAIKO_LAYER_MAP = new HashMap<String, String>() {
+
+		private static final long serialVersionUID = -172190187624353423L;
+
 		{
 			put("Article", "商品");
 			put("Warehouse", "倉庫");

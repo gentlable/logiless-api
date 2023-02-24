@@ -14,6 +14,7 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -45,6 +46,7 @@ import logiless.web.model.service.SetItemService;
  *
  */
 @Controller
+@Transactional
 @SessionAttributes(value = { "tenpoList", "setItemForm" })
 public class SetItemController {
 

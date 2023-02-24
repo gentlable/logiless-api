@@ -20,7 +20,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,7 +51,6 @@ import logiless.web.model.repository.TenpoRepository;
  *
  */
 @Service
-@Transactional
 public class SetItemService {
 
 	private final TenpoRepository tenpoRepository;
@@ -248,6 +246,8 @@ public class SetItemService {
 	 */
 	public boolean updateSetItem(SetItemForm setItemForm) {
 
+		System.out.println(setItemForm.getSetItem().getCode() + "," + setItemForm.getSetItem().getTenpoCode());
+
 		SetItemEntity setItemEntity = new SetItemEntity();
 		BeanUtils.copyProperties(setItemForm.getSetItem(), setItemEntity);
 
@@ -410,7 +410,9 @@ public class SetItemService {
 
 			// 更新する。
 			for (SetItemForm setItemForm : setItemFormList) {
-				updateSetItem(setItemForm);
+				if (!updateSetItem(setItemForm)) {
+					return false;
+				}
 			}
 
 		} catch (IOException e) {

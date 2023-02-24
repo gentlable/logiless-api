@@ -111,6 +111,7 @@ public class OAuthService {
 			String accessToken = res.getBody().getAccessToken();
 			String newRefreshToken = res.getBody().getRefreshToken();
 
+			// TODO ロジレス定数化
 			oAuthTokenService.save("logiless", accessToken, newRefreshToken);
 
 		} catch (Exception e) {

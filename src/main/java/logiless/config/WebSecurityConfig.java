@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * @author nsh14789
  *
  */
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -42,7 +43,7 @@ public class WebSecurityConfig {
 			// TODO SecurityFilterChainでの実装理解
 //			.exceptionHandling((
 //				ex) -> ex
-//					.authenticationEntryPoint(new Http403ForbiddenEntryPoint()).accessDeniedHandler(CustomAccessDeniedHandler())
+//					.authenticationEntryPoint(new Http403ForbiddenEntryPoint()).accessDeniedHandler(new CustomAccessDeniedHandler())
 //			)
 			;
 
