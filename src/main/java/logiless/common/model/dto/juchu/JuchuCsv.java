@@ -5,6 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 出荷実績CSV
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 public class JuchuCsv {

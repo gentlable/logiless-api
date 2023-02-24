@@ -17,6 +17,12 @@ import logiless.common.model.dto.sykka.SykkaDenpyo;
 import logiless.web.model.dto.BaraItem;
 import logiless.web.model.service.SetItemService;
 
+/**
+ * 出荷実績変換サービス
+ * 
+ * @author nsh14789
+ *
+ */
 @Service
 public class JuchuCsvConvertService {
 

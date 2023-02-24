@@ -8,6 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import logiless.web.model.entity.BaraItemEntity;
 
+/**
+ * バラ商品マスタ－レポジトリ
+ * 
+ * @author nsh14789
+ *
+ */
 @Transactional
 @Repository
 public interface BaraItemRepository extends JpaRepository<BaraItemEntity, String> {

@@ -8,6 +8,12 @@ import javax.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * セット商品マスタープライマリキーエンティティ
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 @Entity

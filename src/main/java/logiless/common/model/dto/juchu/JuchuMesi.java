@@ -4,6 +4,12 @@ import logiless.common.model.dto.syohn.Article;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * ロジレス受注伝票明細
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 public class JuchuMesi {

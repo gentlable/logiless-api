@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * spring security configuration
+ * Spring Securityの設定
  * 
  * @author nsh14789
  *

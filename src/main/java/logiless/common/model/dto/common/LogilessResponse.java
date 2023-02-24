@@ -7,6 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * レスポンスDTO
+ * 
+ * @author nsh14789
+ *
+ * @param <T>
+ */
 @Getter
 @Setter
 public class LogilessResponse<T> {

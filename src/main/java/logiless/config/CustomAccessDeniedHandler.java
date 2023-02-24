@@ -10,6 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+/**
+ * TODO 動かすかチェック
+ * 
+ * @author nsh14789
+ *
+ */
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
 	@Override

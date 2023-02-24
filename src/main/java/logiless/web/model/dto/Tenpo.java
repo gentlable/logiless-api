@@ -8,6 +8,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 店舗DTO
+ * 
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 public class Tenpo {

@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 
 /**
- * CSV出力管理
+ * CSV出力サービス
  * 
  * @author nsh14789
  */

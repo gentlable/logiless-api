@@ -6,6 +6,12 @@ import javax.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * セット商品検索フォーム
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 public class SetItemSearchForm {

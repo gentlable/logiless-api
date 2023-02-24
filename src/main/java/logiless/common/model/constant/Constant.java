@@ -3,6 +3,12 @@ package logiless.common.model.constant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * マップ用クラス 削除するかも
+ * 
+ * @author nsh14789
+ *
+ */
 public class Constant {
 
 	/**

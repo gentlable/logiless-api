@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import logiless.common.model.dto.oAuth.OAuth;
-import logiless.config.OAuthProperties;
+import logiless.config.properties.OAuthProperties;
 import lombok.extern.slf4j.Slf4j;
 
 /**

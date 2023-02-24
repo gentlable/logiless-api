@@ -8,6 +8,12 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 作業者マスターエンティティ
+ * 
+ * @author nsh14789
+ *
+ */
 @Entity
 @Table(name = "M_SGYOSYA")
 @Getter

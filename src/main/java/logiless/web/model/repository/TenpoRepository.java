@@ -10,6 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import logiless.web.model.entity.TenpoEntity;
 
+/**
+ * 店舗マスタ－レポジトリ
+ * 
+ * @author nsh14789
+ *
+ */
 @Transactional
 @Repository
 public interface TenpoRepository extends JpaRepository<TenpoEntity, String> {

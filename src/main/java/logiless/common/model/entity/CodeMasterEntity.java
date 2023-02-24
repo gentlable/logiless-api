@@ -9,6 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * コード定義マスタエンティティ
+ * 
+ * @author nsh14789
+ *
+ */
 @Entity
 @Table(name = "API_CODE_MASTER")
 @Getter

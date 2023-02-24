@@ -7,6 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import logiless.web.model.entity.SgyosyaEntity;
 
+/**
+ * 作業者マスターレポジトリ
+ * 
+ * @author nsh14789
+ *
+ */
 @Repository
 public interface SgyosyaRepository extends JpaRepository<SgyosyaEntity, String> {
 

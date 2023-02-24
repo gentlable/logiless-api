@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 import javax.persistence.Id;
 
+/**
+ * バラ商品マスタープライマリキーエンティティ
+ * 
+ * @author nsh14789
+ *
+ */
 public class BaraItemPKEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;

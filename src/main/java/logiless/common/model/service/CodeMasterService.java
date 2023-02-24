@@ -9,6 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import logiless.common.model.dto.repository.CodeMasterRepository;
 import logiless.common.model.entity.CodeMasterEntity;
 
+/**
+ * コード定義マスタサービス
+ * 
+ * @author nsh14789
+ *
+ */
 public class CodeMasterService {
 
 	private final CodeMasterRepository codeMasterRepository;

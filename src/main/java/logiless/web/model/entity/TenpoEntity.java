@@ -8,6 +8,12 @@ import javax.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 店舗マスターエンティティ
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 @Entity

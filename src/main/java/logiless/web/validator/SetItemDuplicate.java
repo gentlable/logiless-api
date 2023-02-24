@@ -9,6 +9,13 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+/**
+ * セット商品重複チェックアノテーション<br>
+ * 店舗コードとセット商品コードをキーにセット商品の重複チェックを行う
+ * 
+ * @author nsh14789
+ *
+ */
 @Target({ ElementType.FIELD, ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = SetItemDuplicateValidator.class)

@@ -9,6 +9,12 @@ import org.springframework.stereotype.Component;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * セッション情報を扱う TODO これでいいのか
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 @Component

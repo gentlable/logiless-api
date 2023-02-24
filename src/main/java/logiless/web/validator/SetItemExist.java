@@ -9,6 +9,13 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+/**
+ * セット商品存在チェックアノテーション<br>
+ * 店舗コードとセット商品コードをキーにセット商品の存在チェックを行う
+ * 
+ * @author nsh14789
+ *
+ */
 @Target({ ElementType.FIELD, ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = SetItemExistValidator.class)

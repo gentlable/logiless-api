@@ -1,4 +1,4 @@
-package logiless.config;
+package logiless.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

@@ -9,12 +9,19 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+/**
+ * ファイル必須アノテーション<br>
+ * アップロードファイルを必須化する
+ * 
+ * @author nsh14789
+ *
+ */
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = FileRequiredValidator.class)
 public @interface FileRequired {
 
-	String message() default "必須です";
+	String message() default "ファイルを選択してください";
 
 	Class<?>[] groups() default {};
 

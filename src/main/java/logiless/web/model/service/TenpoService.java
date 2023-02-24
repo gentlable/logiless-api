@@ -14,6 +14,12 @@ import logiless.web.model.entity.TenpoEntity;
 import logiless.web.model.form.TenpoListForm;
 import logiless.web.model.repository.TenpoRepository;
 
+/**
+ * 店舗マスター関連サービス
+ * 
+ * @author nsh14789
+ *
+ */
 @Service
 @Transactional
 public class TenpoService {

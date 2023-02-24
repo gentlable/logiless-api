@@ -25,6 +25,12 @@ import logiless.common.model.dto.common.LogilessResponse;
 import logiless.common.model.dto.juchu.JuchuCsv;
 import logiless.common.model.dto.juchu.JuchuDenpyo;
 
+/**
+ * ロジレスAPIサービス
+ * 
+ * @author nsh14789
+ *
+ */
 @Service
 public class LogilessApiService {
 

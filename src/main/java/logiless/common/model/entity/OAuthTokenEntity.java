@@ -9,6 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * OAuthトークンエンティティ
+ * 
+ * @author nsh14789
+ *
+ */
 @Entity
 @Table(name = "API_T_OAUTH_TOKEN")
 @Getter

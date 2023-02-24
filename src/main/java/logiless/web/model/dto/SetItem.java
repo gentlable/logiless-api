@@ -10,6 +10,12 @@ import logiless.web.validator.SetItemExist;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * セット商品DTO
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 @SetItemDuplicate(groups = { InsertData.class }, code = "code", tenpoCode = "tenpoCode")

@@ -45,6 +45,12 @@ import logiless.web.model.repository.BaraItemRepository;
 import logiless.web.model.repository.SetItemRepository;
 import logiless.web.model.repository.TenpoRepository;
 
+/**
+ * セット商品マスター関連サービス
+ * 
+ * @author nsh14789
+ *
+ */
 @Service
 @Transactional
 public class SetItemService {

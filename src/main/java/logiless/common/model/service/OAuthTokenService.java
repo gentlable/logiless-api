@@ -8,6 +8,12 @@ import logiless.common.model.dto.oAuth.OAuthToken;
 import logiless.common.model.dto.repository.OAuthTokenRepository;
 import logiless.common.model.entity.OAuthTokenEntity;
 
+/**
+ * OAuthトークンテーブルに関する処理
+ * 
+ * @author nsh14789
+ *
+ */
 @Service
 public class OAuthTokenService {
 
@@ -27,6 +33,9 @@ public class OAuthTokenService {
 	public OAuthToken getOAuthTokenByPlatform(String platform) {
 
 		OAuthTokenEntity entity = oAuthTokenRepository.findByPlatform(platform);
+		if (entity == null) {
+			return null;
+		}
 		OAuthToken oAuthToken = new OAuthToken();
 		BeanUtils.copyProperties(entity, oAuthToken);
 		return oAuthToken;

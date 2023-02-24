@@ -10,6 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import logiless.web.model.entity.SgyosyaEntity;
 
+/**
+ * ユーザー認証
+ * 
+ * @author nsh14789
+ *
+ */
 public class CustomUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = -1045509628154498849L;
@@ -34,14 +40,10 @@ public class CustomUserDetails implements UserDetails {
 		return sgyosya.getPasswordCd();
 	}
 
-	@Override // TODO
+	@Override
 	public String getUsername() {
 		return sgyosya.getSgyosyaCd();
 	}
-//
-//	public String getUsername() {
-//		return sgyosya.getName();
-//	}
 
 	@Override
 	public boolean isAccountNonExpired() {

@@ -10,6 +10,12 @@ import javax.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * バラ商品DTO
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 public class BaraItem {

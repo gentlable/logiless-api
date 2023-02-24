@@ -6,6 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * ロジレスOAuth2.0トークン
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)

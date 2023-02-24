@@ -5,6 +5,12 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * ファイル必須チェック実装
+ * 
+ * @author nsh14789
+ *
+ */
 public class FileRequiredValidator implements ConstraintValidator<FileRequired, MultipartFile> {
 
 	@Override

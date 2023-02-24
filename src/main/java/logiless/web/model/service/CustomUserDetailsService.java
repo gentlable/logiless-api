@@ -10,6 +10,12 @@ import logiless.config.userdetails.CustomUserDetails;
 import logiless.web.model.entity.SgyosyaEntity;
 import logiless.web.model.repository.SgyosyaRepository;
 
+/**
+ * ユーザー認証サービス
+ * 
+ * @author nsh14789
+ *
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

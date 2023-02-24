@@ -11,6 +11,11 @@ import logiless.config.serializer.NullValueSerializer;
 
 @Configuration
 public class JacksonConfig {
+	/**
+	 * jsondataを変換するときにnullにするやつだったかな TODO
+	 * 
+	 * @return
+	 */
 	@Bean
 	public Jackson2ObjectMapperBuilder jackson2ObjectMapper() {
 		Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder() {

@@ -9,6 +9,12 @@ import logiless.web.model.dto.SetItem;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * セット商品登録フォーム
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 public class SetItemForm {

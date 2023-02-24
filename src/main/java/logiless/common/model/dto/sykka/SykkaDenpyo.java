@@ -8,11 +8,17 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * ロジレス出荷伝票
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 @ToString
 public class SykkaDenpyo {
-	
+
 	private String id;
 	private String code;
 	private String documentStatus;

@@ -10,6 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import logiless.web.model.dto.SetItem;
 import logiless.web.model.service.SetItemService;
 
+/**
+ * セット商品重複チェック実装
+ * 
+ * @author nsh14789
+ *
+ */
 public class SetItemDuplicateValidator implements ConstraintValidator<SetItemDuplicate, Object> {
 
 	private final SetItemService setItemService;

@@ -7,6 +7,12 @@ import logiless.web.model.dto.Tenpo;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * ロジレス受注伝票
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 public class JuchuDenpyo {

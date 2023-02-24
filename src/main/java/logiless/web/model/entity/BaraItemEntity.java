@@ -10,6 +10,12 @@ import logiless.web.model.entity.primarykey.BaraItemPKEntity;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * バラ商品マスターエンティティ
+ * 
+ * @author nsh14789
+ *
+ */
 @Getter
 @Setter
 @Entity

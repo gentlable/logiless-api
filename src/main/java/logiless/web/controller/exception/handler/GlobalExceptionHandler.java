@@ -4,6 +4,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * 例外管理
+ * 
+ * @author nsh14789
+ *
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
