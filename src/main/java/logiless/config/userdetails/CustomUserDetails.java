@@ -1,4 +1,4 @@
-package logiless.config;
+package logiless.config.userdetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,16 +8,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import logiless.web.model.entity.UserEntity;
+import logiless.web.model.entity.SgyosyaEntity;
 
 public class CustomUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = -1045509628154498849L;
 
-	private UserEntity user;
+	private SgyosyaEntity sgyosya;
 
-	public CustomUserDetails(UserEntity user) {
-		this.user = user;
+	public CustomUserDetails(SgyosyaEntity sgyosya) {
+		this.sgyosya = sgyosya;
 	}
 
 	@Override
@@ -31,13 +31,17 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return user.getPassword();
+		return sgyosya.getPasswordCd();
 	}
 
-	@Override
+	@Override // TODO
 	public String getUsername() {
-		return user.getName();
+		return sgyosya.getSgyosyaCd();
 	}
+//
+//	public String getUsername() {
+//		return sgyosya.getName();
+//	}
 
 	@Override
 	public boolean isAccountNonExpired() {

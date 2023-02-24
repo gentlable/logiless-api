@@ -1,17 +1,12 @@
 package logiless.config;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import logiless.web.model.service.CustomUserDetailsService;
 
 /**
  * spring security configuration
@@ -23,13 +18,6 @@ import logiless.web.model.service.CustomUserDetailsService;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-	private final CustomUserDetailsService customUserDetailsService;
-
-	@Autowired
-	public WebSecurityConfig(CustomUserDetailsService customUserDetailsService) {
-		this.customUserDetailsService = customUserDetailsService;
-	}
-
 	// @formatter:off
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,11 +26,13 @@ public class WebSecurityConfig {
 				requests) -> requests
 					.mvcMatchers("/webjars/**").permitAll()
 					.mvcMatchers("/css/**").permitAll()
-					.mvcMatchers("/login", "/login").permitAll().anyRequest().authenticated()
+					.mvcMatchers("/login", "/login").permitAll()
+					.anyRequest().authenticated()
 			)
     		.formLogin((
 				form) -> form
-    				.loginPage("/login").failureUrl("/login?error").defaultSuccessUrl("/", true).permitAll()
+    				.loginPage("/login").usernameParameter("username").passwordParameter("password")
+    				.failureUrl("/login?error").defaultSuccessUrl("/", true).permitAll()
     		)
 			.logout((
 				logout) -> logout
@@ -59,31 +49,14 @@ public class WebSecurityConfig {
 		return http.build();
 	}
 	// @formatter:on
-//
-//	@Bean
-//	public UserDetailsService userDetailsService() {
-//		UserDetails user = User.withDefaultPasswordEncoder().username("user").password("password").roles("USER")
-//				.build();
-//		return new InMemoryUserDetailsManager(user);
-//	}
-//
-//	@Bean
-//	public PasswordEncoder passwordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	}
 
+	/**
+	 * db側で暗号化しているので、java内では行わない
+	 * 
+	 * @return
+	 */
 	@Bean
-	public UserDetailsManager users(DataSource dataSource) {
-		String userQuery = "select name, password, true from api_m_user where name = '?'";
-		String authoritiesQuery = "select name, roles from api_m_user where name = '?'";
-		JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
-		users.setUsersByUsernameQuery(userQuery);
-		users.setAuthoritiesByUsernameQuery(authoritiesQuery);
-		return users;
+	public PasswordEncoder passwordEncoder() {
+		return NoOpPasswordEncoder.getInstance();
 	}
-//
-//	@Bean
-//	protected UserDetailsService userDetailsService() {
-//		return customUserDetailsService;
-//	}
 }

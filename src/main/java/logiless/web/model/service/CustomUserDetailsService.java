@@ -6,26 +6,26 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import logiless.config.CustomUserDetails;
-import logiless.web.model.entity.UserEntity;
-import logiless.web.model.repository.UserRepository;
+import logiless.config.userdetails.CustomUserDetails;
+import logiless.web.model.entity.SgyosyaEntity;
+import logiless.web.model.repository.SgyosyaRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-	private final UserRepository userRepository;
+	private final SgyosyaRepository sgyosyaRepository;
 
 	@Autowired
-	public CustomUserDetailsService(UserRepository userRepository) {
-		this.userRepository = userRepository;
+	public CustomUserDetailsService(SgyosyaRepository sgyosyaRepository) {
+		this.sgyosyaRepository = sgyosyaRepository;
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		UserEntity user = userRepository.findByName(username);
+	public UserDetails loadUserByUsername(String sgyosyaCd) throws UsernameNotFoundException {
+		SgyosyaEntity user = sgyosyaRepository.findDecryptedPasswordCdBySgyosyaCd(sgyosyaCd);
 
 		if (user == null) {
-			throw new UsernameNotFoundException("Not Found" + username);
+			throw new UsernameNotFoundException("Not Found" + sgyosyaCd);
 		}
 
 		return new CustomUserDetails(user);

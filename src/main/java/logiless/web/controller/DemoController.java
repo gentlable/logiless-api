@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import logiless.web.model.dto.Tenpo;
+import logiless.web.model.entity.TenpoEntity;
 import logiless.web.model.form.TenpoListForm;
+import logiless.web.model.repository.TenpoRepository;
 import logiless.web.model.service.TenpoService;
 
 /**
@@ -25,9 +27,12 @@ public class DemoController {
 
 	private final TenpoService tenpoService;
 
+	private final TenpoRepository tenpoRepository;
+
 	@Autowired
-	public DemoController(TenpoService tenpoService) {
+	public DemoController(TenpoService tenpoService, TenpoRepository tenpoRepository) {
 		this.tenpoService = tenpoService;
+		this.tenpoRepository = tenpoRepository;
 	}
 
 	/**
@@ -37,7 +42,7 @@ public class DemoController {
 	 * @return
 	 */
 	@GetMapping("/demo")
-	private String getDemo(Model model) {
+	public String getDemo(Model model) {
 
 		return "demo/index";
 	}
@@ -49,7 +54,7 @@ public class DemoController {
 	 * @return
 	 */
 	@GetMapping("/demo/edit")
-	private String getDemoEdit(Model model) {
+	public String getDemoEdit(Model model) {
 
 		// TODO 店舗取得してモデルにセット
 
@@ -64,7 +69,7 @@ public class DemoController {
 	 * @return
 	 */
 	@PostMapping("/demo/edit")
-	private String postDemoEdit(Model model, @ModelAttribute Tenpo tenpo) {
+	public String postDemoEdit(Model model, @ModelAttribute Tenpo tenpo) {
 
 		boolean result = tenpoService.insertTenpo(tenpo);
 		if (result) {
@@ -82,7 +87,7 @@ public class DemoController {
 	 * @return
 	 */
 	@GetMapping("/demo/editTenpoList")
-	private String getDemoEditTenpoList(Model model) {
+	public String getDemoEditTenpoList(Model model) {
 
 		List<Tenpo> tenpoList = new ArrayList<Tenpo>();
 		tenpoList.add(new Tenpo());
@@ -100,7 +105,7 @@ public class DemoController {
 	 * @return
 	 */
 	@PostMapping("/demo/editTenpoList")
-	private String postDemoEditTenpoList(Model model, @ModelAttribute TenpoListForm tenpoListForm) {
+	public String postDemoEditTenpoList(Model model, @ModelAttribute TenpoListForm tenpoListForm) {
 
 		boolean result = tenpoService.insertTenpoList(tenpoListForm);
 		if (result) {
@@ -109,6 +114,21 @@ public class DemoController {
 			model.addAttribute("message", "登録失敗しました。");
 		}
 		return "demo/editTenpoList";
+	}
+
+	/**
+	 * jpqlデモ（店舗取得）
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/demo/jpql")
+	public String getDemoJpql() {
+
+		List<TenpoEntity> test = tenpoRepository.jqplDemo("5676");
+
+		return "demo/index";
+
 	}
 
 }
