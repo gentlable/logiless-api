@@ -212,9 +212,50 @@ public class LogilessController {
 
 		if (!res) {
 			model.addAttribute("e", "エラー");
-			return "logiless/index";
+			return "redirect:/logiless/index";
 		}
 		model.addAttribute("e", "成功した");
-		return "logiless/index";
+		return "redirect:/logiless/index";
 	}
+
+	/**
+	 * 出荷実績を取得する処理<br>
+	 * 試験の為一気に取得する用。
+	 * 
+	 * @param model
+	 * @param syoriDt
+	 * @return
+	 */
+	@GetMapping("/logiless/api/get/salesOrders/test")
+	public String logilessApiGetSalesOrdersTest(Model model, @RequestParam("syoriDtFr") String syoriDtFr,
+			@RequestParam("syoriDtTo") String syoriDtTo) {
+
+		DateTimeFormatter dateformatterYYYYMMDD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		DateTimeFormatter formatterMMDD = DateTimeFormatter.ofPattern("MMdd");
+		boolean res = false;
+
+		// 開始日と終了日を日付型にする。
+		LocalDate syoriDtFrDate = LocalDate.parse(syoriDtFr, dateformatterYYYYMMDD);
+		LocalDate syoriDtToDate = LocalDate.parse(syoriDtTo, dateformatterYYYYMMDD);
+
+		LocalDate syoriDtDate = syoriDtFrDate;
+
+		// ループする
+		while (true) {
+			res = logilessApiService.getJuchu(syoriDtDate, "3901", "FFAASSJ1.D" + syoriDtDate.format(formatterMMDD));
+			syoriDtDate = syoriDtDate.plusDays(1);
+
+			if (syoriDtDate.isAfter(syoriDtToDate)) {
+				break;
+			}
+		}
+
+		if (!res) {
+			model.addAttribute("e", "エラー");
+			return "redirect:/logiless/index";
+		}
+		model.addAttribute("e", "成功した");
+		return "redirect:/logiless/index";
+	}
+
 }

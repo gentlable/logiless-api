@@ -26,6 +26,6 @@ public class TenpoEntity {
 	private String name;
 
 	@Version
-	private long version;
+	private Long version;
 
 }

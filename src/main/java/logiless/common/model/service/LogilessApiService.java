@@ -56,13 +56,15 @@ public class LogilessApiService {
 	private static final String FINISH_TIME = "15:30:00";
 
 	/**
-	 * 出荷実績を取得
+	 * 出荷実績を取得<br>
+	 * 指定されたファイル名でCSV形式で出力する。
 	 * 
 	 * @param syoriDt
 	 * @param tenpoCd
+	 * @param filname
 	 * @return
 	 */
-	public boolean getJuchu(LocalDate syoriDt, String tenpoCd) {
+	public boolean getJuchu(LocalDate syoriDt, String tenpoCd, String filename) {
 
 		if (syoriDt == null) {
 			syoriDt = LocalDate.now();
@@ -129,12 +131,8 @@ public class LogilessApiService {
 			// セット商品分割処理
 			for (JuchuDenpyo juchuDenpyo : juchuDenpyoList) {
 
-				// TODO どのメソッドを使うか確定したら他の処理は消す
-				newJuchuDenpyoList.add(juchuCsvConvertService.addBaraItem1(juchuDenpyo));
-
+				newJuchuDenpyoList.add(juchuCsvConvertService.addBaraItem(juchuDenpyo));
 			}
-
-			String filename = "CDX.STACK.FFAASSJ1";
 
 			fileOutputService.output(filename, csvMapper.writer(schema)
 					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(newJuchuDenpyoList)));
@@ -162,8 +160,18 @@ public class LogilessApiService {
 	 * @return
 	 */
 	public boolean getJuchu(String syoriDt, String tenpoCd) {
+		return getJuchu(LocalDate.parse(syoriDt, DATE_FORMATTER), tenpoCd, "CDX.STACK.FFAASSJ1");
+	}
 
-		return getJuchu(LocalDate.parse(syoriDt, DATE_FORMATTER), tenpoCd);
+	/**
+	 * 受注伝票データを取得（出荷実績）
+	 * 
+	 * @param syoriDt
+	 * @param tenpoCd
+	 * @return
+	 */
+	public boolean getJuchu(LocalDate syoriDt, String tenpoCd) {
+		return getJuchu(syoriDt, tenpoCd, "CDX.STACK.FFAASSJ1");
 	}
 
 }

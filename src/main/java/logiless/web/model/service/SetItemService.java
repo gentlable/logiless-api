@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,18 +54,21 @@ import logiless.web.model.repository.TenpoRepository;
  *
  */
 @Service
+@Transactional
 public class SetItemService {
 
 	private final TenpoRepository tenpoRepository;
 	private final SetItemRepository setItemRepository;
 	private final BaraItemRepository baraItemRepository;
+	private final EntityManager entityManager;
 
 	@Autowired
 	public SetItemService(TenpoRepository tenpoRepository, SetItemRepository setItemRepository,
-			BaraItemRepository baraItemRepository) {
+			BaraItemRepository baraItemRepository, EntityManager entityManager) {
 		this.tenpoRepository = tenpoRepository;
 		this.setItemRepository = setItemRepository;
 		this.baraItemRepository = baraItemRepository;
+		this.entityManager = entityManager;
 	}
 
 	@InitBinder
@@ -134,15 +140,9 @@ public class SetItemService {
 	public List<SetItem> getSetItemListByCodeAndNameLikeAndTenpoCode(String code, String name, String tenpoCode) {
 
 		SetItemEntity e = new SetItemEntity();
-		// TODO ここもっとかっこよくかけたらいいな
 
-		// 空文字を入れると空文字と一致検索しちゃうので、空文字の場合は格納せず検索条件としない
-		if (!StringUtils.isEmpty(code)) {
-			e.setCode(code);
-		}
-		if (!StringUtils.isEmpty(name)) {
-			e.setName(name);
-		}
+		e.setCode(code);
+		e.setName(name);
 		e.setTenpoCode(tenpoCode);
 
 		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.contains());
@@ -157,6 +157,8 @@ public class SetItemService {
 		}
 		return setItemList;
 	}
+
+//	public 
 
 	/**
 	 * 店舗コード、セット商品コードでセット商品を取得
@@ -205,8 +207,10 @@ public class SetItemService {
 	 */
 	public boolean insertSetItem(SetItemForm setItemForm) {
 
+		SetItem setItem = setItemForm.getSetItem();
+
 		SetItemEntity setItemEntity = new SetItemEntity();
-		BeanUtils.copyProperties(setItemForm.getSetItem(), setItemEntity);
+		BeanUtils.copyProperties(setItem, setItemEntity);
 
 		try {
 			setItemRepository.save(setItemEntity);
@@ -219,6 +223,7 @@ public class SetItemService {
 
 		try {
 			for (BaraItem baraItem : baraItemList) {
+				baraItem.setTenpoCode(setItem.getTenpoCode());
 				if (StringUtils.isEmpty(baraItem.getCode())) {
 					continue;
 				}
@@ -232,7 +237,7 @@ public class SetItemService {
 			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -246,13 +251,25 @@ public class SetItemService {
 	 */
 	public boolean updateSetItem(SetItemForm setItemForm) {
 
-		System.out.println(setItemForm.getSetItem().getCode() + "," + setItemForm.getSetItem().getTenpoCode());
+		SetItem setItem = setItemForm.getSetItem();
 
-		SetItemEntity setItemEntity = new SetItemEntity();
-		BeanUtils.copyProperties(setItemForm.getSetItem(), setItemEntity);
+		// 排他ロックを行う
+		String jpql = "SELECT e FROM SetItemEntity e WHERE e.code = :code AND e.tenpoCode = :tenpoCode AND e.version = :version";
 
 		try {
-			setItemRepository.save(setItemEntity);
+
+			SetItemEntity setItemEntity = entityManager.createQuery(jpql, SetItemEntity.class)
+					.setParameter("code", setItem.getCode()).setParameter("tenpoCode", setItem.getTenpoCode())
+					.setParameter("version", setItem.getVersion()).getSingleResult();
+
+			setItemEntity.setCode(setItem.getCode());
+			setItemEntity.setTenpoCode(setItem.getTenpoCode());
+			setItemEntity.setName(setItem.getName());
+			entityManager.merge(setItemEntity);
+
+		} catch (NoResultException e) {
+			// 更新対象が見つからない
+			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -410,7 +427,7 @@ public class SetItemService {
 
 			// 更新する。
 			for (SetItemForm setItemForm : setItemFormList) {
-				if (!updateSetItem(setItemForm)) {
+				if (!insertSetItem(setItemForm)) {
 					return false;
 				}
 			}

@@ -42,4 +42,9 @@ public class SetItem {
 	 * セット商品マスタ選択用チェックボックス
 	 */
 	private boolean check;
+
+	/**
+	 * 更新度数
+	 */
+	private Long version;
 }

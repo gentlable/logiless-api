@@ -9,7 +9,7 @@
 	<main>
 		<div class="container">
 			<div class="container">
-				<form th:action="@{'/setItem/master/submit'}" class="row g-3" th:object="${setItemForm}" method="post">
+				<form th:action="@{'/setItem/master/'+${action}}" class="row g-3" th:object="${setItemForm}" method="post">
 					<div class="col-4">
 						<label for="tenpo" class="form-label" th:text="#{text.tenpo}"></label>
 						<select class="form-select" th:field="*{setItem.tenpoCode}" th:if="${!setItemForm.editFlg}">

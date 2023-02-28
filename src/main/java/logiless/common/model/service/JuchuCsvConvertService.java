@@ -348,6 +348,9 @@ public class JuchuCsvConvertService {
 
 				SykkaDenpyo sykkaDenpyo = juchuDenpyo.getOutboundDeliveries().get(0);
 
+				// TODO nullだとその項目はダブルクォーテーションが付かず、基幹側でエラーとなるので空文字に変換してセットしている。
+				// すごくダサいので改修したい
+
 				juchuCsv.setJuchuCd(StringUtils.defaultString(juchuDenpyo.getCode()));
 				juchuCsv.setOyaJuchuCd(StringUtils.defaultString(juchuDenpyo.getParentCode()));
 				juchuCsv.setDenpyoDate(StringUtils.defaultString(juchuDenpyo.getPostingDate()));
@@ -578,87 +581,13 @@ public class JuchuCsvConvertService {
 
 	/**
 	 * 受注伝票データのバラ商品について単価を付与<br>
-	 * 親明細、セット商品マスタの明細、子明細の順
-	 * 
-	 * @param juchuDenpyo
-	 * @return
-	 */
-	public JuchuDenpyo addBaraItem(JuchuDenpyo juchuDenpyo) {
-
-		List<JuchuMesi> juchuMesiList = juchuDenpyo.getLines();
-		List<JuchuMesi> newJuchuMesiList = new ArrayList<>();
-
-		for (int i = 0; i < juchuMesiList.size(); i++) {
-
-			JuchuMesi juchuMesi = juchuMesiList.get(i);
-			newJuchuMesiList.add(juchuMesi);
-
-			if (!"1".equals(juchuMesi.getIsParent())) {
-				continue;
-			}
-
-			String tenpoCd = juchuDenpyo.getStore().getCode();
-			String oyaSyohnCd = juchuMesi.getArticleCode();
-
-			List<BaraItem> baraItemList = setItemService.getBaraItemByTenpoCodeAndSetItemCode(tenpoCd, oyaSyohnCd);
-
-			for (BaraItem baraItem : baraItemList) {
-
-				boolean existFlg = false;
-
-				for (JuchuMesi rec : juchuMesiList) {
-
-					if (rec.getArticleCode().equals(baraItem.getCode())
-							&& rec.getQuantity().equals(rec.getQuantity())) {
-
-						JuchuMesi newRec = new JuchuMesi();
-
-						BeanUtils.copyProperties(rec, newRec);
-
-						newRec.setIsChild("9");
-						newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
-						newRec.setOyaSyohnCd(baraItem.getSetItemCode());
-
-						newJuchuMesiList.add(newRec);
-
-						existFlg = true;
-
-						break;
-					}
-				}
-
-				if (!existFlg) {
-					JuchuMesi newRec = new JuchuMesi();
-					BeanUtils.copyProperties(juchuMesi, newRec);
-
-					newRec.setArticleCode(baraItem.getCode());
-					newRec.setArticleName(baraItem.getName());
-					newRec.setQuantity(baraItem.getQuantity() + "");
-					newRec.setIsParent("0");
-					newRec.setIsChild("9");
-					newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
-					newRec.setOyaSyohnCd(baraItem.getSetItemCode());
-
-					newJuchuMesiList.add(newRec);
-				}
-
-			}
-
-		}
-		juchuDenpyo.setLines(newJuchuMesiList);
-
-		return juchuDenpyo;
-	}
-
-	/**
-	 * 受注伝票データのバラ商品について単価を付与<br>
 	 * 親明細の次にマスタからのデータを追加<br>
 	 * 最後に子明細をまとめて追加
 	 * 
 	 * @param juchuDenpyo
 	 * @return
 	 */
-	public JuchuDenpyo addBaraItem1(JuchuDenpyo juchuDenpyo) {
+	public JuchuDenpyo addBaraItem(JuchuDenpyo juchuDenpyo) {
 
 		List<JuchuMesi> juchuMesiList = juchuDenpyo.getLines();
 		// 新しい明細一覧作成
@@ -696,8 +625,8 @@ public class JuchuCsvConvertService {
 
 				for (JuchuMesi rec : juchuMesiList) {
 
-					if (rec.getArticleCode().equals(baraItem.getCode())
-							&& rec.getQuantity().equals(rec.getQuantity())) {
+					// 分割したバラ商品と、商品コードと単価が一致する子明細がある場合
+					if (rec.getArticleCode().equals(baraItem.getCode()) && "1".equals(rec.getIsChild())) {
 
 						JuchuMesi newRec = new JuchuMesi();
 
@@ -715,6 +644,7 @@ public class JuchuCsvConvertService {
 					}
 				}
 
+				// 分割したバラ商品と一致する明細がなかった場合
 				if (!existFlg) {
 
 					JuchuMesi newRec = new JuchuMesi();
@@ -730,77 +660,10 @@ public class JuchuCsvConvertService {
 
 					newJuchuMesiList.add(newRec);
 				}
-
 			}
-
 		}
 		newJuchuMesiList.addAll(tempJuchuChildMesiList);
 		juchuDenpyo.setLines(newJuchuMesiList);
-
-		return juchuDenpyo;
-	}
-
-	// 最後に追加情報追加
-	public JuchuDenpyo addBaraItem2(JuchuDenpyo juchuDenpyo) {
-
-		List<JuchuMesi> juchuMesiList = juchuDenpyo.getLines();
-		List<JuchuMesi> newJuchuMesiList = new ArrayList<>();
-
-		for (JuchuMesi juchuMesi : juchuMesiList) {
-
-			if (!juchuMesi.getIsParent().equals("1")) {
-				continue;
-			}
-
-			String tenpoCd = juchuDenpyo.getStore().getCode();
-			String oyaSyohnCd = juchuMesi.getArticleCode();
-
-			List<BaraItem> baraItemList = setItemService.getBaraItemByTenpoCodeAndSetItemCode(tenpoCd, oyaSyohnCd);
-
-			for (BaraItem baraItem : baraItemList) {
-
-				boolean existFlg = false;
-
-				for (JuchuMesi rec : juchuMesiList) {
-
-					if (rec.getArticleCode().equals(baraItem.getCode())
-							&& rec.getQuantity().equals(rec.getQuantity())) {
-
-						JuchuMesi newRec = new JuchuMesi();
-
-						BeanUtils.copyProperties(rec, newRec);
-
-						newRec.setIsChild("9");
-						newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
-						newRec.setOyaSyohnCd(baraItem.getSetItemCode());
-
-						newJuchuMesiList.add(newRec);
-
-						existFlg = true;
-
-						break;
-					}
-				}
-
-				if (!existFlg) {
-
-					JuchuMesi newRec = new JuchuMesi();
-					BeanUtils.copyProperties(juchuMesi, newRec);
-
-					newRec.setArticleCode(baraItem.getCode());
-					newRec.setArticleName(baraItem.getName());
-					newRec.setQuantity(baraItem.getQuantity() + "");
-					newRec.setIsParent("0");
-					newRec.setIsChild("9");
-					newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
-					newRec.setOyaSyohnCd(baraItem.getSetItemCode());
-
-					newJuchuMesiList.add(newRec);
-				}
-			}
-		}
-		juchuMesiList.addAll(newJuchuMesiList);
-		juchuDenpyo.setLines(juchuMesiList);
 
 		return juchuDenpyo;
 	}

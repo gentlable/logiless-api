@@ -19,6 +19,21 @@
 					</div>
 				</form>
 			</div>
+			<div class="container">
+				<form action="#" th:action="@{/logiless/api/get/salesOrders/test}" class="row g-3" method="get">
+					<div class="col-4">
+						<label for="setItemCode" class="form-label" th:text="処理日開始日"></label>
+						<input type="date" class="form-control" th:value="${date}" name="syoriDtFr">
+					</div>
+					<div class="col-4">
+						<label for="setItemCode" class="form-label" th:text="処理日終了日"></label>
+						<input type="date" class="form-control" th:value="${date}" name="syoriDtTo">
+					</div>
+					<div>
+						<button type="submit" class="btn btn-light btn-lg" th:text="取得"></button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</main>
 </body>

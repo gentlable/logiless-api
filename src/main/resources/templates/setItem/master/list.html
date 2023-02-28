@@ -32,11 +32,11 @@
 					<span class="error" th:if="${#fields.hasErrors('setItemCode')}" th:errors="*{setItemCode}"></span>
 					<div class="col-2">
 						<button type="submit" class="btn btn-dark" name="mode" th:text="#{text.search}"
-							value="search"></button>
+							th:formaction="@{'/setItem/master/list'}" value="search"></button>
 					</div>
 					<div class="col-2">
 						<button type="submit" class="btn btn-dark" name="csv" th:text="#{text.csvExport}"
-							value="csv"></button>
+							th:formaction="@{'/setItem/master/list/csv'}" value="csv"></button>
 					</div>
 				</form>
 				<p th:text="${message}"></p>

@@ -32,6 +32,6 @@ public class SetItemEntity {
 	private String tenpoCode;
 
 	@Version
-	private long version;
+	private Long version;
 
 }

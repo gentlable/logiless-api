@@ -39,6 +39,6 @@ public class BaraItemEntity {
 	private double price;
 
 	@Version
-	private long version;
+	private Long version;
 
 }

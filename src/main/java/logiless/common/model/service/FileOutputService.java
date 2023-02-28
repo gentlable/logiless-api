@@ -19,7 +19,7 @@ public class FileOutputService {
 	private static final String OUTPUT_DIR = "output";
 
 	/**
-	 * MS932(SHIFT-JIS)形式でファイルを出力する
+	 * MS932(SHIFT-JIS)形式でファイルをディレクトリに出力する
 	 * 
 	 * @param filename
 	 * @param input
@@ -49,7 +49,6 @@ public class FileOutputService {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 }
