@@ -52,7 +52,8 @@ public class CustomErrorController implements ErrorController {
 			status = HttpStatus.NOT_FOUND;
 		}
 		return status;
-	}//
+	}
+
 //	@Override
 //	public String getErrorPath() {
 //		return "/error";

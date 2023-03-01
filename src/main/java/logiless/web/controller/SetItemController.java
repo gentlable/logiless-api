@@ -19,7 +19,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -35,8 +34,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
-import logiless.common.model.service.FileOutputService;
-import logiless.web.com.storage.StorageFileNotFoundException;
 import logiless.web.model.dto.BaraItem;
 import logiless.web.model.dto.SetItem;
 import logiless.web.model.dto.SetItem.InsertData;
@@ -61,7 +58,6 @@ public class SetItemController {
 
 	private final Validator validator;
 	private final SetItemService setItemService;
-	private final FileOutputService fileOutputService;
 
 	@InitBinder
 	public void initbinder(WebDataBinder binder) {
@@ -69,10 +65,9 @@ public class SetItemController {
 	}
 
 	@Autowired
-	public SetItemController(Validator validator, SetItemService setItemService, FileOutputService fileOutputService) {
+	public SetItemController(Validator validator, SetItemService setItemService) {
 		this.validator = validator;
 		this.setItemService = setItemService;
-		this.fileOutputService = fileOutputService;
 	}
 
 	@ModelAttribute(value = "tenpoList")
@@ -159,9 +154,7 @@ public class SetItemController {
 			SetItemListForm setItemListForm = new SetItemListForm();
 			setItemListForm.setSetItemList(new ArrayList<SetItem>());
 			model.addAttribute("setItemListForm", setItemListForm);
-			// TODO 例外処理
-
-			throw new Exception();
+			return ResponseEntity.notFound().build();
 		}
 
 		List<SetItem> setItemList = setItemService.getSetItemListByCodeAndNameLikeAndTenpoCode(
@@ -307,7 +300,7 @@ public class SetItemController {
 			model.addAttribute("message", "登録が完了しました");
 		}
 
-		return "redirect:/setItem/master/list/init";
+		return "setItem/complete";
 	}
 
 	/**
@@ -349,7 +342,7 @@ public class SetItemController {
 			model.addAttribute("message", "登録が完了しました");
 		}
 
-		return "redirect:/setItem/master/list/init";
+		return "setItem/complete";
 	}
 
 	/**
@@ -365,13 +358,13 @@ public class SetItemController {
 
 		boolean result = setItemService.deleteSetItem(setItemListForm);
 		if (!result) {
-			redirectAttributes.addAttribute("message", "エラー登録に失敗しました。");
+			redirectAttributes.addAttribute("message", "エラー削除に失敗しました。");
 			return "setItem/master/list";
 		} else {
 			redirectAttributes.addAttribute("message", "登録が完了しました");
 		}
 
-		return "redirect:/setItem/master/list/init";
+		return "setItem/complete";
 	}
 
 	/**
@@ -405,11 +398,6 @@ public class SetItemController {
 			return "setItem/upload/index";
 		}
 
-		return "setItem/upload/complete";
-	}
-
-	@ExceptionHandler(StorageFileNotFoundException.class)
-	public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
-		return ResponseEntity.notFound().build();
+		return "setItem/complete";
 	}
 }

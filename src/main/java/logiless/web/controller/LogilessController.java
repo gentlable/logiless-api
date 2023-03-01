@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,8 +64,6 @@ public class LogilessController {
 	public String index(Model model) {
 		// リソースからメッセージを取得するサンプル
 //		System.out.println(messageSource.getMessage("hello", new String[]{}, Locale.getDefault()));
-
-//		model.addAttribute("code", "1");
 		return "index";
 	}
 
@@ -128,7 +127,7 @@ public class LogilessController {
 	}
 
 	/**
-	 * ロジレスに登録されている店舗リスト表示（連携デモ用）
+	 * ロジレスに登録されている店舗を連携する
 	 * 
 	 * @param model
 	 * @param bs
@@ -206,29 +205,31 @@ public class LogilessController {
 	 * @return
 	 */
 	@GetMapping("/logiless/api/get/salesOrders")
-	public String logilessApiGetSalesOrders(Model model, @RequestParam("syoriDt") String syoriDt) {
+	public String logilessApiGetSalesOrders(@RequestParam("syoriDt") String syoriDt, Model model) {
 
 		boolean res = logilessApiService.getJuchu(syoriDt, "3901");
 
 		if (!res) {
-			model.addAttribute("e", "エラー");
-			return "redirect:/logiless/index";
+			// TODO エラーハンドリング
+			model.addAttribute("message", "エラー");
+			return "/logiless/api/get/salesOrders";
 		}
-		model.addAttribute("e", "成功した");
-		return "redirect:/logiless/index";
+		model.addAttribute("message", "出荷実績の取得に成功しました");
+		return "logiless/complete";
 	}
 
 	/**
 	 * 出荷実績を取得する処理<br>
-	 * 試験の為一気に取得する用。
+	 * 試験の為一気に取得する用。<br>
+	 * TODO リリース時削除
 	 * 
 	 * @param model
 	 * @param syoriDt
 	 * @return
 	 */
 	@GetMapping("/logiless/api/get/salesOrders/test")
-	public String logilessApiGetSalesOrdersTest(Model model, @RequestParam("syoriDtFr") String syoriDtFr,
-			@RequestParam("syoriDtTo") String syoriDtTo) {
+	public String logilessApiGetSalesOrdersTest(@RequestParam("syoriDtFr") String syoriDtFr,
+			@RequestParam("syoriDtTo") String syoriDtTo, RedirectAttributes redirectAttributes) {
 
 		DateTimeFormatter dateformatterYYYYMMDD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		DateTimeFormatter formatterMMDD = DateTimeFormatter.ofPattern("MMdd");
@@ -251,11 +252,11 @@ public class LogilessController {
 		}
 
 		if (!res) {
-			model.addAttribute("e", "エラー");
-			return "redirect:/logiless/index";
+			redirectAttributes.addAttribute("e", "エラー");
+			return "redirect:/logiless";
 		}
-		model.addAttribute("e", "成功した");
-		return "redirect:/logiless/index";
+		redirectAttributes.addAttribute("e", "成功した");
+		return "redirect:/logiless";
 	}
 
 }

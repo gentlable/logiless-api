@@ -1,0 +1,19 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment"></head>
+
+<body>
+	<div th:replace="common/header :: header_fragment(title='完了画面')"></div>
+	<main>
+		<div class="container">
+			<p th:text="${message}"></p>
+			<div>
+				<button type="button" class="btn btn-dark" onclick="location.href='/setItem/index'"
+					th:text="#{text.back}"></button>
+			</div>
+		</div>
+	</main>
+</body>
+
+</html>

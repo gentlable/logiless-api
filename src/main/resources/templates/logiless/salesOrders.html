@@ -15,10 +15,11 @@
 						<input type="date" class="form-control" th:value="${date}" name="syoriDt">
 					</div>
 					<div>
-						<button type="submit" class="btn btn-light btn-lg" th:text="取得"></button>
+						<button type="submit" class="btn btn-dark" th:text="取得"></button>
 					</div>
 				</form>
 			</div>
+			<br />
 			<div class="container">
 				<form action="#" th:action="@{/logiless/api/get/salesOrders/test}" class="row g-3" method="get">
 					<div class="col-4">
@@ -30,7 +31,7 @@
 						<input type="date" class="form-control" th:value="${date}" name="syoriDtTo">
 					</div>
 					<div>
-						<button type="submit" class="btn btn-light btn-lg" th:text="取得"></button>
+						<button type="submit" class="btn btn-dark" th:text="取得"></button>
 					</div>
 				</form>
 			</div>

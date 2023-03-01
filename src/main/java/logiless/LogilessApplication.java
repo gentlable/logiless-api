@@ -3,15 +3,12 @@ package logiless;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import logiless.web.com.storage.StorageProperties;
 import logiless.web.model.service.ProxyService;
 
 @SpringBootApplication
-@EnableConfigurationProperties(StorageProperties.class)
 @EnableScheduling
 public class LogilessApplication {
 
@@ -28,7 +25,5 @@ public class LogilessApplication {
 
 		// プロキシ突破のため一度httpでネット接続する。
 		app.proxyService.proxyAccess();
-
 	}
-
 }
