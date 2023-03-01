@@ -1,73 +1,8 @@
 {"properties": [
   {
-    "name": "oauth2.logiless.client-id",
+    "name": "env.marchant-id",
     "type": "java.lang.String",
-    "description": "A description for 'oauth2.logiless.client-id'"
-  },
-  {
-    "name": "oauth2.logiless.clientSecret",
-    "type": "java.lang.String",
-    "description": "A description for 'oauth2.logiless.clientSecret'"
-  },
-  {
-    "name": "proxy.http.host",
-    "type": "java.lang.String",
-    "description": "A description for 'proxy.http.host'"
-  },
-  {
-    "name": "proxy.http.port",
-    "type": "java.lang.String",
-    "description": "A description for 'proxy.http.port'"
-  },
-  {
-    "name": "proxy.id",
-    "type": "java.lang.String",
-    "description": "A description for 'proxy.id'"
-  },
-  {
-    "name": "proxy.password",
-    "type": "java.lang.String",
-    "description": "A description for 'proxy.password'"
-  },
-  {
-    "name": "proxy.https.host",
-    "type": "java.lang.String",
-    "description": "A description for 'proxy.https.host'"
-  },
-  {
-    "name": "proxy.https.port",
-    "type": "java.lang.String",
-    "description": "A description for 'proxy.https.port'"
-  },
-  {
-    "name": "env.dev.marchant-id",
-    "type": "java.lang.String",
-    "description": "A description for 'env.dev.marchant-id'"
-  },
-  {
-    "name": "env.prod.marchant-id",
-    "type": "java.lang.String",
-    "description": "A description for 'env.prod.marchant-id'"
-  },
-  {
-    "name": "jackson.deserialization",
-    "type": "java.lang.String",
-    "description": "A description for 'jackson.deserialization'"
-  },
-  {
-    "name": "oauth2.logiless.redirectUri",
-    "type": "java.lang.String",
-    "description": "A description for 'oauth2.logiless.redirectUri'"
-  },
-  {
-    "name": "env.dev.proxyflg",
-    "type": "java.lang.String",
-    "description": "A description for 'env.dev.proxyflg'"
-  },
-  {
-    "name": "env.prod.proxyflg",
-    "type": "java.lang.String",
-    "description": "A description for 'env.prod.proxyflg'"
+    "description": "A description for 'env.marchant-id'"
   },
   {
     "name": "env.proxyflg",
@@ -75,13 +10,23 @@
     "description": "A description for 'env.proxyflg'"
   },
   {
-    "name": "env.marchantId",
-    "type": "java.lang.String",
-    "description": "A description for 'env.marchantId'"
-  },
-  {
     "name": "scheduler.cron",
     "type": "java.lang.String",
     "description": "A description for 'scheduler.cron'"
+  },
+  {
+    "name": "file.output.directroy",
+    "type": "java.lang.String",
+    "description": "A description for 'file.output.directroy'"
+  },
+  {
+    "name": "file.output.test",
+    "type": "java.lang.String",
+    "description": "A description for 'file.output.test'"
+  },
+  {
+    "name": "file.output.directory",
+    "type": "java.lang.String",
+    "description": "A description for 'file.output.directory'"
   }
 ]}

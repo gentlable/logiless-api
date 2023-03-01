@@ -5,7 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import logiless.config.properties.FileOutputProperties;
 
 /**
  * ファイル出力サービス
@@ -16,7 +19,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class FileOutputService {
 
-	private static final String OUTPUT_DIR = "output";
+	private final FileOutputProperties fileOutputProperties;
+
+	@Autowired
+	FileOutputService(FileOutputProperties fileOutputProperties) {
+		this.fileOutputProperties = fileOutputProperties;
+	}
 
 	/**
 	 * MS932(SHIFT-JIS)形式でファイルをディレクトリに出力する
@@ -30,9 +38,11 @@ public class FileOutputService {
 		OutputStreamWriter osw = null;
 		BufferedWriter bw = null;
 
+		String outputDir = fileOutputProperties.getDirectory();
+
 		try {
 
-			fo = new FileOutputStream(OUTPUT_DIR + "/" + filename, true);
+			fo = new FileOutputStream(outputDir + filename, true);
 			osw = new OutputStreamWriter(fo, "MS932");
 			bw = new BufferedWriter(osw);
 

@@ -134,8 +134,12 @@ public class LogilessApiService {
 				newJuchuDenpyoList.add(juchuCsvConvertService.addBaraItem(juchuDenpyo));
 			}
 
+			// データファイル出力
 			fileOutputService.output(filename, csvMapper.writer(schema)
 					.writeValueAsString(juchuCsvConvertService.juchuCsvConvert(newJuchuDenpyoList)));
+
+			// トリガーファイル出力
+			fileOutputService.output(filename + ".TRIG", "");
 
 		} catch (HttpClientErrorException e) {
 
