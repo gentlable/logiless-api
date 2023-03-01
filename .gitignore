@@ -34,5 +34,4 @@ build/
 
 ### 
 application*.yml
-upload-dir/
-output/
+.svn
