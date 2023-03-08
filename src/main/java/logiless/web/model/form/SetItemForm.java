@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import logiless.web.model.dto.BaraItem;
 import logiless.web.model.dto.SetItem;
+import logiless.web.validator.BaraItemDuplicate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,12 +20,13 @@ import lombok.Setter;
 @Setter
 public class SetItemForm {
 
-	private String tenpoName;
+	private String tenpoNm;
 
 	@Valid
 	private SetItem setItem;
 
 	@Valid
+	@BaraItemDuplicate
 	private List<BaraItem> baraItemList;
 
 	private boolean editFlg;

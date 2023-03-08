@@ -9,41 +9,46 @@
 	<main>
 		<div class="container">
 			<div class="container">
-				<form th:action="@{'/setItem/master/'+${action}}" class="row g-3" th:object="${setItemForm}" method="post">
+				<form th:action="@{'/setItem/master/'+${action}}" class="row g-3" th:object="${setItemForm}"
+					method="post">
 					<div class="col-4">
 						<label for="tenpo" class="form-label" th:text="#{text.tenpo}"></label>
-						<select class="form-select" th:field="*{setItem.tenpoCode}" th:if="${!setItemForm.editFlg}">
-							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}">
+						<select class="form-select" th:field="*{setItem.tenpoCd}" th:if="${!setItemForm.editFlg}">
+							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.tenpoCd}"
+								th:text="${tenpo.tenpoNm}">
 							</option>
 						</select>
 						<span th:if="${setItemForm.editFlg}">
-							<input type="hidden" class="form-control" th:field="*{setItem.tenpoCode}">
-							<input type="text" class="form-control" th:value="*{tenpoName}"
+							<input type="hidden" class="form-control" th:field="*{setItem.tenpoCd}">
+							<input type="text" class="form-control" th:value="*{tenpoNm}"
 								th:readonly="${setItemForm.editFlg}">
 						</span>
 					</div>
 					<div class="col-4">
-						<label for="setItemCode" class="form-label" th:text="#{text.setItemCd}"></label>
-						<input type="number" class="form-control" th:field="*{setItem.code}" placeholder="0123456789"
-							th:readonly="${setItemForm.editFlg}" maxlength="10"
+						<label for="setItemCd" class="form-label" th:text="#{text.setItemCd}"></label>
+						<input type="number" class="form-control" th:field="*{setItem.setItemCd}"
+							placeholder="0123456789" th:readonly="${setItemForm.editFlg}" maxlength="10"
 							oninput="javascript:if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
 					</div>
 					<div class="col-4">
-						<label for="setItemName" class="form-label" th:text="#{text.setItemName}"></label>
-						<input type="text" class="form-control" th:field="*{setItem.name}" placeholder="キリンセット">
+						<label for="setItemNm" class="form-label" th:text="#{text.setItemNm}"></label>
+						<input type="text" class="form-control" th:field="*{setItem.setItemNm}" placeholder="キリンセット">
 					</div>
 					<span class="error" th:text="${message}"></span>
-					<span class="error" th:if="${#fields.hasErrors('setItem.tenpoCode')}"
-						th:errors="*{setItem.tenpoCode}"></span>
-					<span class="error" th:if="${#fields.hasErrors('setItem.code')}" th:errors="*{setItem.code}"></span>
+					<span class="error" th:if="${#fields.hasErrors('baraItemList')}"
+						th:errors="*{baraItemList}"></span>
+					<span class="error" th:if="${#fields.hasErrors('setItem.tenpoCd')}"
+						th:errors="*{setItem.tenpoCd}"></span>
+					<span class="error" th:if="${#fields.hasErrors('setItem.setItemCd')}"
+						th:errors="*{setItem.setItemCd}"></span>
 					<div class="container mb-4 overflow-auto">
 						<table class="table">
 							<thead class="sticky-top">
 								<tr>
 									<th scope="col" class="text-center btn-th"></th>
-									<th scope="col" class="text-center code-th" th:text="#{text.baraItemCode}"></th>
-									<th scope="col" class="text-center name-th" th:text="#{text.baraItemName}"></th>
-									<th scope="col" class="text-center quantity-th" th:text="#{text.suRyo}"></th>
+									<th scope="col" class="text-center cd-th" th:text="#{text.baraItemCd}"></th>
+									<th scope="col" class="text-center name-th" th:text="#{text.baraItemNm}"></th>
+									<th scope="col" class="text-center quantity-th" th:text="#{text.suryo}"></th>
 									<th scope="col" class="text-center price-th" th:text="#{text.tanka}"></th>
 								</tr>
 							</thead>
@@ -55,15 +60,18 @@
 									</td>
 									<td>
 										<input type="text" class="form-control"
-											th:field="*{baraItemList[__${st.index}__].code}" maxlength="10"
+											th:field="*{baraItemList[__${st.index}__].baraItemCd}" maxlength="10"
 											oninput="javascript:if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" />
 										<span class="error"
-											th:if="${#fields.hasErrors('baraItemList[__${st.index}__].code')}"
-											th:errors="*{baraItemList[__${st.index}__].code}"></span>
+											th:if="${#fields.hasErrors('baraItemList[__${st.index}__].baraItemCd')}"
+											th:errors="*{baraItemList[__${st.index}__].baraItemCd}"></span>
 									</td>
 									<td>
 										<input type="text" class="form-control"
-											th:field="*{baraItemList[__${st.index}__].name}" />
+											th:field="*{baraItemList[__${st.index}__].baraItemNm}" />
+										<span class="error"
+											th:if="${#fields.hasErrors('baraItemList[__${st.index}__].baraItemNm')}"
+											th:errors="*{baraItemList[__${st.index}__].baraItemNm}"></span>
 									</td>
 									<td>
 										<input type="number" class="form-control"
@@ -127,24 +135,24 @@
 			tdButton.appendChild(newButton)
 			newRow.appendChild(tdButton)
 
-			let tdCode = document.createElement("td")
-			let newCode = document.createElement("input")
-			newCode.className = "form-control"
-			newCode.type = "text"
-			newCode.id = label + num + ".code"
-			newCode.name = label + "[" + num + "]" + ".code"
-			newCode.setAttribute("maxlength", "10")
-			newCode.setAttribute("oninput", "javascript:if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);")
+			let tdCd = document.createElement("td")
+			let newCd = document.createElement("input")
+			newCd.className = "form-control"
+			newCd.type = "text"
+			newCd.id = label + num + ".baraItemCd"
+			newCd.name = label + "[" + num + "]" + ".baraItemCd"
+			newCd.setAttribute("maxlength", "10")
+			newCd.setAttribute("oninput", "javascript:if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);")
 
-			tdCode.appendChild(newCode)
-			newRow.appendChild(tdCode)
+			tdCd.appendChild(newCd)
+			newRow.appendChild(tdCd)
 
 			let tdName = document.createElement("td")
 			let newName = document.createElement("input")
 			newName.className = "form-control"
 			newName.type = "text"
-			newName.id = label + num + ".name"
-			newName.name = label + "[" + num + "]" + ".name"
+			newName.id = label + num + ".baraItemNm"
+			newName.name = label + "[" + num + "]" + ".baraItemNm"
 
 			tdName.appendChild(newName)
 			newRow.appendChild(tdName)
@@ -158,7 +166,7 @@
 			newQuantity.value = 0
 			newQuantity.setAttribute("min", "0")
 			newQuantity.setAttribute("max", "99999")
-			
+
 
 			tdQuantity.appendChild(newQuantity)
 			newRow.appendChild(tdQuantity)
@@ -189,7 +197,7 @@
 			width: 80px;
 		}
 
-		.code-th {
+		.cd-th {
 			width: 150px;
 		}
 

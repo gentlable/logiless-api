@@ -7,7 +7,7 @@
 	<div th:replace="common/header :: header_fragment(title='ロジレス認証完了画面')"></div>
 	<main>
 		<div class="container">
-			<h1>ロジレス連携に成功した！！！</h1>
+			<h3 th:text="${message}"></h3>
 			<button class="btn btn-light btn-lg" onclick="location.href='/logiless'"
 				th:text="ロジレスメニューに戻る"></button>
 

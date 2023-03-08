@@ -437,8 +437,8 @@ public class JuchuCsvConvertService {
 				juchuCsv.setOyaMesi(StringUtils.defaultString(line.getIsParent()));
 				juchuCsv.setKoMesi(StringUtils.defaultString(line.getIsChild()));
 				juchuCsv.setSoukoId(StringUtils.defaultString(sykkaDenpyo.getWarehouse()));
-				juchuCsv.setTenpoId(StringUtils.defaultString(juchuDenpyo.getStore().getCode()));
-				juchuCsv.setTenpoNm(StringUtils.defaultString(juchuDenpyo.getStore().getName()));
+				juchuCsv.setTenpoId(StringUtils.defaultString(juchuDenpyo.getStore().getTenpoCd()));
+				juchuCsv.setTenpoNm(StringUtils.defaultString(juchuDenpyo.getStore().getTenpoNm()));
 				juchuCsv.setTenpoCd("");// TODO(利用していなさそうなので) 今後のこと考えるのであれば、店舗コードとプラットフォームは必要、でも二重管理になるのめちゃいやだな
 				juchuCsv.setPlatform("汎用"); // TODO(オールアバウトだけなので汎用) 今後のこと考えるのであれば、店舗コードとプラットフォームは必要、でも二重管理になるのめちゃいやだな
 				juchuCsv.setLogilessCd(StringUtils.defaultString(line.getArticle().getObjectCode()));
@@ -614,10 +614,10 @@ public class JuchuCsvConvertService {
 			// セット商品じゃないもの、親明細を新しい明細一覧に追加
 			newJuchuMesiList.add(juchuMesi);
 
-			String tenpoCd = juchuDenpyo.getStore().getCode();
+			String tenpoCd = juchuDenpyo.getStore().getTenpoCd();
 			String oyaSyohnCd = juchuMesi.getArticleCode();
 
-			List<BaraItem> baraItemList = setItemService.getBaraItemByTenpoCodeAndSetItemCode(tenpoCd, oyaSyohnCd);
+			List<BaraItem> baraItemList = setItemService.getBaraItemByTenpoCdAndSetItemCd(tenpoCd, oyaSyohnCd);
 
 			for (BaraItem baraItem : baraItemList) {
 
@@ -626,7 +626,7 @@ public class JuchuCsvConvertService {
 				for (JuchuMesi rec : juchuMesiList) {
 
 					// 分割したバラ商品と、商品コードと単価が一致する子明細がある場合
-					if (rec.getArticleCode().equals(baraItem.getCode()) && "1".equals(rec.getIsChild())) {
+					if (rec.getArticleCode().equals(baraItem.getBaraItemCd()) && "1".equals(rec.getIsChild())) {
 
 						JuchuMesi newRec = new JuchuMesi();
 
@@ -634,7 +634,7 @@ public class JuchuCsvConvertService {
 
 						newRec.setIsChild("9");
 						newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
-						newRec.setOyaSyohnCd(baraItem.getSetItemCode());
+						newRec.setOyaSyohnCd(baraItem.getSetItemCd());
 
 						newJuchuMesiList.add(newRec);
 
@@ -650,13 +650,13 @@ public class JuchuCsvConvertService {
 					JuchuMesi newRec = new JuchuMesi();
 					BeanUtils.copyProperties(juchuMesi, newRec);
 
-					newRec.setArticleCode(baraItem.getCode());
-					newRec.setArticleName(baraItem.getName());
+					newRec.setArticleCode(baraItem.getBaraItemCd());
+					newRec.setArticleName(baraItem.getBaraItemNm());
 					newRec.setQuantity(baraItem.getQuantity() + "");
 					newRec.setIsParent("0");
 					newRec.setIsChild("9");
 					newRec.setTnk(String.format("%.2f", baraItem.getPrice()));
-					newRec.setOyaSyohnCd(baraItem.getSetItemCode());
+					newRec.setOyaSyohnCd(baraItem.getSetItemCd());
 
 					newJuchuMesiList.add(newRec);
 				}

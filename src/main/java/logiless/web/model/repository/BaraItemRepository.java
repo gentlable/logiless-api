@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import logiless.web.model.entity.BaraItemEntity;
 
 /**
- * バラ商品マスタ－レポジトリ
+ * ロジレスバラ商品マスタ－レポジトリ
  * 
  * @author nsh14789
  *
@@ -21,18 +21,18 @@ public interface BaraItemRepository extends JpaRepository<BaraItemEntity, String
 	/**
 	 * 店舗コードとセット商品コードをキーにバラ商品昇順を取得
 	 * 
-	 * @param tenpoCode
-	 * @param setItemCode
+	 * @param tenpoCd
+	 * @param setItemCd
 	 * @return
 	 */
-	List<BaraItemEntity> findByTenpoCodeAndSetItemCodeOrderByCode(String tenpoCode, String setItemCode);
+	List<BaraItemEntity> findByTenpoCdAndSetItemCdOrderByBaraItemCd(String tenpoCd, String setItemCd);
 
 	/**
 	 * 店舗コードとセット商品コードをキーにバラ商品を削除
 	 * 
-	 * @param tenpoCode
-	 * @param setItemCode
+	 * @param tenpoCd
+	 * @param setItemCd
 	 * @return
 	 */
-	List<BaraItemEntity> deleteByTenpoCodeAndSetItemCode(String tenpoCode, String setItemCode);
+	List<BaraItemEntity> deleteByTenpoCdAndSetItemCd(String tenpoCd, String setItemCd);
 }

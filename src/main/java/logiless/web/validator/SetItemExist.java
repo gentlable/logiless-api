@@ -27,9 +27,9 @@ public @interface SetItemExist {
 
 	Class<? extends Payload>[] payload() default {};
 
-	String code();
+	String setItemCd();
 
-	String tenpoCode();
+	String tenpoCd();
 
 	@Target({ ElementType.FIELD })
 	@Retention(RetentionPolicy.RUNTIME)

@@ -22,9 +22,13 @@ public class Tenpo {
 	@NotBlank
 	@Pattern(regexp = "^[0-9]{4}$")
 	@JsonProperty("id")
-	private String code;
+	private String tenpoCd;
 
 	@NotBlank
-	private String name;
+	@JsonProperty("name")
+	private String tenpoNm;
+
+	@NotBlank
+	private String platform;
 
 }

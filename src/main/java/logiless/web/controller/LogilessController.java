@@ -2,6 +2,7 @@ package logiless.web.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -11,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -26,6 +29,7 @@ import logiless.common.model.service.LogilessApiService;
 import logiless.common.model.service.OAuthService;
 import logiless.common.model.service.OAuthTokenService;
 import logiless.web.model.dto.Tenpo;
+import logiless.web.model.service.SetItemService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -36,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Controller
 @Slf4j
+@SessionAttributes(value = { "tenpoList" })
 public class LogilessController {
 
 	private static final String merchantId = "1022";
@@ -44,14 +49,21 @@ public class LogilessController {
 	private final LogilessApiService logilessApiService;
 	private final OAuthService oauth2Service;
 	private final OAuthTokenService oAuthTokenService;
+	private final SetItemService setItemService;
 
 	@Autowired
 	public LogilessController(MessageSource messageSource, LogilessApiService logilessApiService,
-			OAuthService oauth2Service, OAuthTokenService oAuthTokenService) {
+			OAuthService oauth2Service, OAuthTokenService oAuthTokenService, SetItemService setItemService) {
 		this.messageSource = messageSource;
 		this.logilessApiService = logilessApiService;
 		this.oauth2Service = oauth2Service;
 		this.oAuthTokenService = oAuthTokenService;
+		this.setItemService = setItemService;
+	}
+
+	@ModelAttribute(value = "tenpoList")
+	public List<Tenpo> createTenpoList() {
+		return setItemService.getAllTenpoList();
 	}
 
 	/**
@@ -62,11 +74,12 @@ public class LogilessController {
 	 */
 	@GetMapping("/")
 	public String index(Model model) {
-		// リソースからメッセージを取得するサンプル
+		// リソースからメッセージを取得するサンプル TODO
 //		System.out.println(messageSource.getMessage("hello", new String[]{}, Locale.getDefault()));
 		return "index";
 	}
 
+	// TODO
 	@GetMapping("error")
 	public String error(Model model) {
 		model.addAttribute("test", "test");
@@ -102,10 +115,15 @@ public class LogilessController {
 	 * @return
 	 */
 	@GetMapping("/logiless/getOAuth2")
-	public String logilessGetOAuth2(@RequestParam("code") String code, Model model) {
+	public String logilessGetOAuth2(@RequestParam(name = "code", required = false) String code, Model model) {
 
 		ResponseEntity<OAuth> res = oauth2Service.getOAuth2(code);
-		model.addAttribute("statusCode", res.getStatusCode());
+
+		if (res != null) {
+			model.addAttribute("message", "アクセストークンの取得に成功しました。");
+		} else {
+			model.addAttribute("message", "アクセストークンの取得に失敗しました。");
+		}
 
 		return "logiless/getOAuth2";
 	}
@@ -119,8 +137,10 @@ public class LogilessController {
 	@GetMapping("/logiless/refresh")
 	public String logilessRefresh(Model model) {
 
-		if (!oauth2Service.refreshToken()) {
-			return "logiless/index";
+		if (oauth2Service.refreshToken()) {
+			model.addAttribute("message", "アクセストークンの取得に成功しました。");
+		} else {
+			model.addAttribute("message", "アクセストークンの取得に失敗しました。");
 		}
 
 		return "logiless/getOAuth2";
@@ -205,7 +225,8 @@ public class LogilessController {
 	 * @return
 	 */
 	@GetMapping("/logiless/api/get/salesOrders")
-	public String logilessApiGetSalesOrders(@RequestParam("syoriDt") String syoriDt, Model model) {
+	public String logilessApiGetSalesOrders(@RequestParam("syoriDt") String syoriDt,
+			@RequestParam("tenpo") String tenpo, Model model) {
 
 		boolean res = logilessApiService.getJuchu(syoriDt, "3901");
 

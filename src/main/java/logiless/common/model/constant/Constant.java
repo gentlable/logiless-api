@@ -1,29 +1,15 @@
 package logiless.common.model.constant;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
- * マップ用クラス 削除するかも
+ * 定数クラス
  * 
  * @author nsh14789
  *
  */
 public class Constant {
 
-	/**
-	 * カテゴリコード
-	 * 
-	 * @author nsh14789
-	 *
-	 */
-	@Getter
-	@AllArgsConstructor
-	public enum CATEGORY_CD {
+	public final static String HAN_SPACE = " ";
 
-		GENDER("00001");
-
-		private String value;
-	}
+	public final static String ZEN_SPACE = "　";
 
 }

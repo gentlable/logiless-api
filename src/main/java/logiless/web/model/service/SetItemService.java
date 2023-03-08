@@ -1,5 +1,8 @@
 package logiless.web.model.service;
 
+import static logiless.common.model.constant.Constant.HAN_SPACE;
+import static logiless.common.model.constant.Constant.ZEN_SPACE;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -32,6 +35,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
+import logiless.common.exception.InvalidInputException;
 import logiless.web.model.dto.BaraItem;
 import logiless.web.model.dto.SetItem;
 import logiless.web.model.dto.SetItemCsv;
@@ -79,12 +83,12 @@ public class SetItemService {
 	/**
 	 * 店舗コードで店舗を取得
 	 * 
-	 * @param code
+	 * @param tenpoCd
 	 * @return
 	 */
-	public Tenpo getTenpoByCode(String code) {
+	public Tenpo getTenpoByTenpoCd(String tenpoCd) {
 
-		TenpoEntity entity = tenpoRepository.findById(code).get();
+		TenpoEntity entity = tenpoRepository.findById(tenpoCd).get();
 
 		if (entity == null) {
 			return null;
@@ -103,7 +107,7 @@ public class SetItemService {
 	 */
 	public List<Tenpo> getAllTenpoList() {
 
-		List<TenpoEntity> entityList = tenpoRepository.findAllByOrderByCode();
+		List<TenpoEntity> entityList = tenpoRepository.findAllByOrderByTenpoCd();
 		List<Tenpo> tenpoList = new ArrayList<Tenpo>();
 		for (TenpoEntity entity : entityList) {
 			Tenpo tenpo = new Tenpo();
@@ -116,12 +120,12 @@ public class SetItemService {
 	/**
 	 * 店舗コードでセット商品一覧を取得
 	 * 
-	 * @param tenpoCode
+	 * @param tenpoCd
 	 * @return
 	 */
-	public List<SetItem> getSetItemListByTenpoCode(String tenpoCode) {
+	public List<SetItem> getSetItemListByTenpoCd(String tenpoCd) {
 
-		List<SetItemEntity> entityList = setItemRepository.findByTenpoCodeOrderByCode(tenpoCode);
+		List<SetItemEntity> entityList = setItemRepository.findByTenpoCdOrderBySetItemCd(tenpoCd);
 		List<SetItem> setItemList = new ArrayList<SetItem>();
 		for (SetItemEntity entity : entityList) {
 			SetItem setItem = new SetItem();
@@ -134,22 +138,23 @@ public class SetItemService {
 	/**
 	 * 店舗コード、セット商品コード、セット商品名でセット商品一覧を取得
 	 * 
-	 * @param tenpoCode
+	 * @param tenpoCd
 	 * @return
 	 */
-	public List<SetItem> getSetItemListByCodeAndNameLikeAndTenpoCode(String code, String name, String tenpoCode) {
+	public List<SetItem> getSetItemListBySetItemCdAndSetItemNmLikeAndTenpoCd(String setItemCd, String setItemNm,
+			String tenpoCd) {
 
 		SetItemEntity e = new SetItemEntity();
 
-		e.setCode(code);
-		e.setName(name);
-		e.setTenpoCode(tenpoCode);
+		e.setSetItemCd(setItemCd);
+		e.setSetItemNm(setItemNm);
+		e.setTenpoCd(tenpoCd);
 
-		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.contains());
+		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("setItemNm", match -> match.contains());
 
 		List<SetItemEntity> entityList = setItemRepository.findAll(Example.of(e, matcher),
-				Sort.by(Sort.Direction.ASC, "code"));
-		List<SetItem> setItemList = new ArrayList<SetItem>();
+				Sort.by(Sort.Direction.ASC, "setItemCd"));
+		List<SetItem> setItemList = new ArrayList<>();
 		for (SetItemEntity entity : entityList) {
 			SetItem setItem = new SetItem();
 			BeanUtils.copyProperties(entity, setItem);
@@ -158,18 +163,16 @@ public class SetItemService {
 		return setItemList;
 	}
 
-//	public 
-
 	/**
 	 * 店舗コード、セット商品コードでセット商品を取得
 	 * 
-	 * @param code
-	 * @param tenpoCode
+	 * @param setItemCd
+	 * @param tenpoCd
 	 * @return
 	 */
-	public SetItem getSetItemByCodeAndTenpoCode(String code, String tenpoCode) {
+	public SetItem getSetItemBySetItemCdAndTenpoCd(String setItemCd, String tenpoCd) {
 
-		SetItemEntity entity = setItemRepository.findByCodeAndTenpoCode(code, tenpoCode);
+		SetItemEntity entity = setItemRepository.findBySetItemCdAndTenpoCd(setItemCd, tenpoCd);
 
 		if (entity == null) {
 			return null;
@@ -183,13 +186,13 @@ public class SetItemService {
 	/**
 	 * 店舗コード、セット商品コードでバラ商品一覧を取得
 	 * 
-	 * @param tenpoCode
-	 * @param setItemCode
+	 * @param tenpoCd
+	 * @param setItemCd
 	 * @return
 	 */
-	public List<BaraItem> getBaraItemByTenpoCodeAndSetItemCode(String tenpoCode, String setItemCode) {
-		List<BaraItemEntity> entityList = baraItemRepository.findByTenpoCodeAndSetItemCodeOrderByCode(tenpoCode,
-				setItemCode);
+	public List<BaraItem> getBaraItemByTenpoCdAndSetItemCd(String tenpoCd, String setItemCd) {
+		List<BaraItemEntity> entityList = baraItemRepository.findByTenpoCdAndSetItemCdOrderByBaraItemCd(tenpoCd,
+				setItemCd);
 		List<BaraItem> baraItemList = new ArrayList<BaraItem>();
 		for (BaraItemEntity entity : entityList) {
 			BaraItem baraItem = new BaraItem();
@@ -212,6 +215,9 @@ public class SetItemService {
 		SetItemEntity setItemEntity = new SetItemEntity();
 		BeanUtils.copyProperties(setItem, setItemEntity);
 
+		// NCHAR型は全角スペースで補完
+		setItemEntity.setSetItemNm(StringUtils.rightPad(setItemEntity.getSetItemNm(), 100, ZEN_SPACE));
+
 		try {
 			setItemRepository.save(setItemEntity);
 		} catch (Exception e) {
@@ -223,12 +229,15 @@ public class SetItemService {
 
 		try {
 			for (BaraItem baraItem : baraItemList) {
-				baraItem.setTenpoCode(setItem.getTenpoCode());
-				if (StringUtils.isEmpty(baraItem.getCode())) {
+				baraItem.setTenpoCd(setItem.getTenpoCd());
+				if (StringUtils.isEmpty(baraItem.getBaraItemCd())) {
 					continue;
 				}
 				BaraItemEntity baraItemEntity = new BaraItemEntity();
 				BeanUtils.copyProperties(baraItem, baraItemEntity);
+				// バラ商品名がnullまたは空文字の場合は半角スペースで補完
+				baraItemEntity.setBaraItemNm(StringUtils.isEmpty(baraItemEntity.getBaraItemNm()) ? HAN_SPACE
+						: baraItemEntity.getBaraItemNm());
 				baraItemRepository.save(baraItemEntity);
 			}
 
@@ -249,27 +258,26 @@ public class SetItemService {
 	 * @param setItemForm
 	 * @return
 	 */
-	public boolean updateSetItem(SetItemForm setItemForm) {
+	public boolean updateSetItem(SetItemForm setItemForm) throws NoResultException {
 
 		SetItem setItem = setItemForm.getSetItem();
 
 		// 排他ロックを行う
-		String jpql = "SELECT e FROM SetItemEntity e WHERE e.code = :code AND e.tenpoCode = :tenpoCode AND e.version = :version";
+		String jpql = "SELECT e FROM SetItemEntity e WHERE e.setItemCd = :setItemCd AND e.tenpoCd = :tenpoCd AND e.version = :version";
 
 		try {
 
 			SetItemEntity setItemEntity = entityManager.createQuery(jpql, SetItemEntity.class)
-					.setParameter("code", setItem.getCode()).setParameter("tenpoCode", setItem.getTenpoCode())
+					.setParameter("setItemCd", setItem.getSetItemCd()).setParameter("tenpoCd", setItem.getTenpoCd())
 					.setParameter("version", setItem.getVersion()).getSingleResult();
 
-			setItemEntity.setCode(setItem.getCode());
-			setItemEntity.setTenpoCode(setItem.getTenpoCode());
-			setItemEntity.setName(setItem.getName());
+			setItemEntity.setSetItemCd(setItem.getSetItemCd());
+			setItemEntity.setTenpoCd(setItem.getTenpoCd());
+			// NCHAR型は全角スペースで補完
+			setItemEntity.setSetItemNm(StringUtils.rightPad(setItemEntity.getSetItemNm(), 100, ZEN_SPACE));
+
 			entityManager.merge(setItemEntity);
 
-		} catch (NoResultException e) {
-			// 更新対象が見つからない
-			return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -277,22 +285,22 @@ public class SetItemService {
 
 		List<BaraItem> baraItemList = setItemForm.getBaraItemList();
 
-		String tenpoCode = setItemForm.getSetItem().getTenpoCode();
-		String setItemCode = setItemForm.getSetItem().getCode();
+		String tenpoCd = setItemForm.getSetItem().getTenpoCd();
+		String setItemCd = setItemForm.getSetItem().getSetItemCd();
 
 		try {
-			baraItemRepository.deleteByTenpoCodeAndSetItemCode(tenpoCode, setItemCode);
+			baraItemRepository.deleteByTenpoCdAndSetItemCd(tenpoCd, setItemCd);
 
 			if (baraItemList != null) {
 
 				for (BaraItem baraItem : baraItemList) {
-					if (StringUtils.isEmpty(baraItem.getCode())) {
+					if (StringUtils.isEmpty(baraItem.getBaraItemCd())) {
 						continue;
 					}
 					BaraItemEntity baraItemEntity = new BaraItemEntity();
 					BeanUtils.copyProperties(baraItem, baraItemEntity);
-					baraItemEntity.setTenpoCode(tenpoCode);
-					baraItemEntity.setSetItemCode(setItemCode);
+					baraItemEntity.setTenpoCd(tenpoCd);
+					baraItemEntity.setSetItemCd(setItemCd);
 
 					baraItemRepository.save(baraItemEntity);
 				}
@@ -321,11 +329,11 @@ public class SetItemService {
 			}
 
 			// 先にバラ商品から削除
-			String tenpoCode = setItem.getTenpoCode();
-			String setItemCode = setItem.getCode();
+			String tenpoCd = setItem.getTenpoCd();
+			String setItemCd = setItem.getSetItemCd();
 
 			try {
-				baraItemRepository.deleteByTenpoCodeAndSetItemCode(tenpoCode, setItemCode);
+				baraItemRepository.deleteByTenpoCdAndSetItemCd(tenpoCd, setItemCd);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -351,8 +359,9 @@ public class SetItemService {
 	 * CSVファイルから一括登録する。
 	 * 
 	 * @return
+	 * @throws InvalidInputException
 	 */
-	public boolean uploadSetItem(SetItemUploadForm setItemUploadForm) {
+	public boolean uploadSetItem(SetItemUploadForm setItemUploadForm) throws InvalidInputException {
 
 		MultipartFile file = setItemUploadForm.getFile();
 
@@ -374,23 +383,22 @@ public class SetItemService {
 
 			Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-			for (SetItemCsv data : setItemCsvList) {
-				Set<ConstraintViolation<SetItemCsv>> violations = validator.validate(data);
+			for (SetItemCsv setItemCsv : setItemCsvList) {
+				Set<ConstraintViolation<SetItemCsv>> violations = validator.validate(setItemCsv);
 				if (!violations.isEmpty()) {
 
 					for (ConstraintViolation<SetItemCsv> violation : violations) {
 						String message = violation.getMessage();
 						Object invalidValue = violation.getInvalidValue();
 
-						// TODO エラーハンドリング
-						return false;
+						throw new InvalidInputException(message);
 					}
-
 				}
 			}
+
 			// 店舗コード、セット商品コード事にまとめる
 			Map<SetItemCsvCompositeKey, List<SetItemCsv>> groupedSetItemCsvListMap = setItemCsvList.stream().collect(
-					Collectors.groupingBy(obj -> new SetItemCsvCompositeKey(obj.getTenpoCode(), obj.getSetItemCode())));
+					Collectors.groupingBy(obj -> new SetItemCsvCompositeKey(obj.getTenpoCd(), obj.getSetItemCd())));
 
 			// CSVDTOからFormに変換する
 			List<SetItemForm> setItemFormList = new ArrayList<>();
@@ -400,23 +408,22 @@ public class SetItemService {
 				SetItemCsv groupedSetItemCsvHead = groupedSetItemCsvList.get(0);
 
 				SetItem setItem = new SetItem();
-				setItem.setCode(groupedSetItemCsvHead.getSetItemCode());
-				setItem.setName(groupedSetItemCsvHead.getSetItemName());
-				setItem.setTenpoCode(groupedSetItemCsvHead.getTenpoCode());
+				setItem.setSetItemCd(groupedSetItemCsvHead.getSetItemCd());
+				setItem.setSetItemNm(groupedSetItemCsvHead.getSetItemNm());
+				setItem.setTenpoCd(groupedSetItemCsvHead.getTenpoCd());
 
 				List<BaraItem> baraItemList = new ArrayList<>();
 
 				for (SetItemCsv setItemCsv : groupedSetItemCsvList) {
 
 					BaraItem baraItem = new BaraItem();
-					baraItem.setCode(setItemCsv.getBaraItemCode());
-					baraItem.setName(setItemCsv.getBaraItemName());
-					baraItem.setSetItemCode(setItemCsv.getSetItemCode());
+					baraItem.setBaraItemCd(setItemCsv.getBaraItemCd());
+					baraItem.setBaraItemNm(setItemCsv.getBaraItemNm());
+					baraItem.setSetItemCd(setItemCsv.getSetItemCd());
 					baraItem.setQuantity(setItemCsv.getQuantity());
 					baraItem.setPrice(setItemCsv.getPrice());
 
 					baraItemList.add(baraItem);
-
 				}
 
 				SetItemForm setItemForm = new SetItemForm();
@@ -424,6 +431,22 @@ public class SetItemService {
 				setItemForm.setBaraItemList(baraItemList);
 				setItemFormList.add(setItemForm);
 			});
+
+			// 各セット商品フォーム内に重複したバラ商品コードがないかチェックする。
+			// ListよりSetの方が早いらしいのでvalidatorクラスを使う。
+			for (SetItemForm setItemForm : setItemFormList) {
+
+				Set<ConstraintViolation<SetItemForm>> violations = validator.validate(setItemForm);
+				if (!violations.isEmpty()) {
+
+					for (ConstraintViolation<SetItemForm> violation : violations) {
+						String message = violation.getMessage();
+						Object invalidValue = violation.getInvalidValue();
+
+						throw new InvalidInputException(message);
+					}
+				}
+			}
 
 			// 更新する。
 			for (SetItemForm setItemForm : setItemFormList) {

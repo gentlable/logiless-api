@@ -2,24 +2,28 @@ package logiless.web.model.entity.primarykey;
 
 import java.io.Serializable;
 
-import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
- * バラ商品マスタープライマリキーエンティティ
+ * ロジレスバラ商品マスタープライマリキーエンティティ
  * 
  * @author nsh14789
  *
  */
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class BaraItemPKEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	private String code;
+	private String baraItemCd;
 
-	@Id
-	private String tenpoCode;
+	private String tenpoCd;
 
-	@Id
-	private String setItemCode;
+	private String setItemCd;
 }

@@ -1,5 +1,6 @@
 package logiless.web.model.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -11,7 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * バラ商品マスターエンティティ
+ * ロジレスバラ商品マスターエンティティ
  * 
  * @author nsh14789
  *
@@ -19,26 +20,33 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "API_M_BARA_ITEM")
+@Table(name = "ロジレスバラ商品マスター")
 @IdClass(BaraItemPKEntity.class)
 public class BaraItemEntity {
 
 	@Id
-	private String code;
+	@Column(name = "バラ商品コード")
+	private String baraItemCd;
 
-	private String name;
+	@Column(name = "バラ商品名")
+	private String baraItemNm;
 
 	@Id
-	private String tenpoCode;
+	@Column(name = "店舗コード")
+	private String tenpoCd;
 
 	@Id
-	private String setItemCode;
+	@Column(name = "セット商品コード")
+	private String setItemCd;
 
+	@Column(name = "数量")
 	private int quantity;
 
+	@Column(name = "単価")
 	private double price;
 
 	@Version
+	@Column(name = "更新度数")
 	private Long version;
 
 }

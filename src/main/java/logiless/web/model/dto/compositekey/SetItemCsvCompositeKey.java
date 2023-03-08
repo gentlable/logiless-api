@@ -17,8 +17,8 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class SetItemCsvCompositeKey {
 
-	private String tenpoCode;
+	private String tenpoCd;
 
-	private String setItemCode;
+	private String setItemCd;
 
 }

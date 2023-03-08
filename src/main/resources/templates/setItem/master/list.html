@@ -12,26 +12,27 @@
 				<form class="row g-3" th:action="@{'/setItem/master/list'}" th:object="${setItemSearchForm}">
 					<div class="col-4">
 						<label for="tenpo" class="form-label" th:text="#{text.tenpo}"></label>
-						<select id="tenpo" name="tenpoCode" class="form-select" th:field="*{tenpoCode}">
-							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.code}" th:text="${tenpo.name}">
+						<select id="tenpo" name="tenpoCd" class="form-select" th:field="*{tenpoCd}">
+							<option th:each="tenpo : ${tenpoList}" th:value="${tenpo.tenpoCd}"
+								th:text="${tenpo.tenpoNm}">
 							</option>
 						</select>
 					</div>
 					<div class="col-4">
-						<label for="setItemCode" class="form-label" th:text="#{text.setItemCd}"></label>
-						<input type="number" class="form-control ime-off" id="setItemCode" name="setItemCode"
-							th:field="*{setItemCode}" placeholder="1234567890" maxlength="10"
+						<label for="setItemCd" class="form-label" th:text="#{text.setItemCd}"></label>
+						<input type="number" class="form-control ime-off" id="setItemCd" name="setItemCd"
+							th:field="*{setItemCd}" placeholder="1234567890" maxlength="10"
 							oninput="javascript:if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
 					</div>
 					<div class="col-4">
-						<label for="setItemName" class="form-label" th:text="#{text.setItemName}"></label>
-						<input type="text" class="form-control ime-on" id="setItemName" name="setItemName"
-							th:field="*{setItemName}" placeholder="キリンセット">
+						<label for="setItemNm" class="form-label" th:text="#{text.setItemNm}"></label>
+						<input type="text" class="form-control ime-on" id="setItemNm" name="setItemNm"
+							th:field="*{setItemNm}" placeholder="キリンセット">
 					</div>
-					<span class="error" th:if="${#fields.hasErrors('tenpoCode')}" th:errors="*{tenpoCode}"></span>
-					<span class="error" th:if="${#fields.hasErrors('setItemCode')}" th:errors="*{setItemCode}"></span>
+					<span class="error" th:if="${#fields.hasErrors('tenpoCd')}" th:errors="*{tenpoCd}"></span>
+					<span class="error" th:if="${#fields.hasErrors('setItemCd')}" th:errors="*{setItemCd}"></span>
 					<div class="col-2">
-						<button type="submit" class="btn btn-dark" name="mode" th:text="#{text.search}"
+						<button type="submit" class="btn btn-dark" name="md" th:text="#{text.search}"
 							th:formaction="@{'/setItem/master/list'}" value="search"></button>
 					</div>
 					<div class="col-2">
@@ -49,10 +50,10 @@
 								<tr>
 									<th scope="col" class="text-center delete-th" th:text="#{text.delete}"></th>
 									<th scope="col" class="text-center no-th" th:text="#{text.no}"></th>
-									<th scope="col" class="text-center tenpo-th" th:text="#{text.tenpoCode}"></th>
-									<th scope="col" class="text-center set-item-code-th" th:text="#{text.setItemCode}">
+									<th scope="col" class="text-center tenpo-th" th:text="#{text.tenpoCd}"></th>
+									<th scope="col" class="text-center set-item-cd-th" th:text="#{text.setItemCd}">
 									</th>
-									<th scope="col" class="text-center set-item-name-th" th:text="#{text.setItemName}">
+									<th scope="col" class="text-center set-item-name-th" th:text="#{text.setItemNm}">
 									</th>
 								</tr>
 							</thead>
@@ -66,17 +67,17 @@
 										<span th:text="${st.count}"></span>
 									</th>
 									<td class="text-center">
-										<span th:text="${setItem.tenpoCode}"></span>
-										<input type="hidden" th:field="*{setItemList[__${st.index}__].tenpoCode}" />
+										<span th:text="${setItem.tenpoCd}"></span>
+										<input type="hidden" th:field="*{setItemList[__${st.index}__].tenpoCd}" />
 									</td>
 									<td class="text-center">
-										<a href="#" th:text="${setItem.code}"
-											th:href="@{/setItem/master/detail(tenpoCode=${setItem.tenpoCode},setItemCode=${setItem.code})}"></a>
-										<input type="hidden" th:field="*{setItemList[__${st.index}__].code}" />
+										<a href="#" th:text="${setItem.setItemCd}"
+											th:href="@{/setItem/master/detail(tenpoCd=${setItem.tenpoCd},setItemCd=${setItem.setItemCd})}"></a>
+										<input type="hidden" th:field="*{setItemList[__${st.index}__].setItemCd}" />
 									</td>
 									<td class="">
-										<span th:text="${setItem.name}"></span>
-										<input type="hidden" th:field="*{setItemList[__${st.index}__].name}" />
+										<span th:text="${setItem.setItemNm}"></span>
+										<input type="hidden" th:field="*{setItemList[__${st.index}__].setItemNm}" />
 									</td>
 								</tr>
 							</tbody>
@@ -128,7 +129,7 @@
 			if (e.srcElement.className.indexOf('click-check') !== -1) {
 				return
 			}
-			let setItemCode = e.srcElement.parentElement.children[3].innerHTML
+			let setItemCd = e.srcElement.parentElement.children[3].innerHTML
 		}
 
 		// TODO 行にクリックイベント付与
@@ -156,7 +157,7 @@
 			min-width: 85px;
 		}
 
-		.set-item-code-th {
+		.set-item-cd-th {
 			min-width: 120px;
 		}
 

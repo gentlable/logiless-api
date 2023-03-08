@@ -1,5 +1,6 @@
 package logiless.web.model.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -9,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 店舗マスターエンティティ
+ * ロジレス店舗マスターエンティティ
  * 
  * @author nsh14789
  *
@@ -17,15 +18,21 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "API_M_TENPO")
+@Table(name = "ロジレス店舗マスター")
 public class TenpoEntity {
 
 	@Id
-	private String code;
+	@Column(name = "店舗コード")
+	private String tenpoCd;
 
-	private String name;
+	@Column(name = "店舗名")
+	private String tenpoNm;
+
+	@Column(name = "プラットフォーム")
+	private String platform;
 
 	@Version
+	@Column(name = "更新度数")
 	private Long version;
 
 }

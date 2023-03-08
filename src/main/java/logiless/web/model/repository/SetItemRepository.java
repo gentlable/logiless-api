@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import logiless.web.model.entity.SetItemEntity;
 
 /**
- * セット商品マスターレポジトリ
+ * ロジレスセット商品マスターレポジトリ
  * 
  * @author nsh14789
  *
@@ -21,19 +21,20 @@ public interface SetItemRepository extends JpaRepository<SetItemEntity, String> 
 	 * 
 	 * @return
 	 */
-	List<SetItemEntity> findByTenpoCodeOrderByCode(String tenpoCode);
+	List<SetItemEntity> findByTenpoCdOrderBySetItemCd(String tenpoCd);
 
 	/**
 	 * 店舗コードとセット商品コードとセット商品名からセット商品を取得
 	 * 
 	 * @return
 	 */
-	List<SetItemEntity> findByCodeAndNameLikeAndTenpoCodeOrderByCode(String code, String name, String tenpoCode);
+	List<SetItemEntity> findBySetItemCdAndSetItemNmLikeAndTenpoCdOrderBySetItemCd(String setItemCd, String setItemNm,
+			String tenpoCd);
 
 	/**
 	 * 店舗コードとセット商品コードからセット商品を取得
 	 * 
 	 * @return
 	 */
-	SetItemEntity findByCodeAndTenpoCode(String code, String tenpoCode);
+	SetItemEntity findBySetItemCdAndTenpoCd(String setItemCd, String tenpoCd);
 }

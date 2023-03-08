@@ -25,23 +25,23 @@ public class SetItemDuplicateValidator implements ConstraintValidator<SetItemDup
 		this.setItemService = setItemService;
 	}
 
-	private String code;
-	private String tenpoCode;
+	private String setItemCd;
+	private String tenpoCd;
 
 	@Override
 	public void initialize(SetItemDuplicate annotation) {
-		this.code = annotation.code();
-		this.tenpoCode = annotation.tenpoCode();
+		this.setItemCd = annotation.setItemCd();
+		this.tenpoCd = annotation.tenpoCd();
 	}
 
 	@Override
 	public boolean isValid(Object object, ConstraintValidatorContext context) {
 
 		BeanWrapper beanWrapper = new BeanWrapperImpl(object);
-		String code = (String) beanWrapper.getPropertyValue(this.code);
-		String tenpoCode = (String) beanWrapper.getPropertyValue(this.tenpoCode);
+		String setItemCd = (String) beanWrapper.getPropertyValue(this.setItemCd);
+		String tenpoCd = (String) beanWrapper.getPropertyValue(this.tenpoCd);
 
-		SetItem setItem = setItemService.getSetItemByCodeAndTenpoCode(code, tenpoCode);
+		SetItem setItem = setItemService.getSetItemBySetItemCdAndTenpoCd(setItemCd, tenpoCd);
 
 		if (setItem != null) {
 			return false;

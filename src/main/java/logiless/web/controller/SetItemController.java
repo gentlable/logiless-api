@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.NoResultException;
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
 import javax.validation.Validator;
@@ -34,6 +35,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
+import logiless.common.exception.InvalidInputException;
 import logiless.web.model.dto.BaraItem;
 import logiless.web.model.dto.SetItem;
 import logiless.web.model.dto.SetItem.InsertData;
@@ -59,6 +61,11 @@ public class SetItemController {
 	private final Validator validator;
 	private final SetItemService setItemService;
 
+	/**
+	 * リクエストの内空文字はnullに変換する
+	 * 
+	 * @param binder
+	 */
 	@InitBinder
 	public void initbinder(WebDataBinder binder) {
 		binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
@@ -100,9 +107,6 @@ public class SetItemController {
 	public String getSetItemMasterListInit(Model model,
 			@ModelAttribute("setItemSearchForm") SetItemSearchForm setItemSearchForm) {
 
-		List<Tenpo> tenpoList = setItemService.getAllTenpoList();
-		model.addAttribute("tenpoList", tenpoList);
-
 		SetItemListForm setItemListForm = new SetItemListForm();
 		setItemListForm.setSetItemList(new ArrayList<SetItem>());
 		model.addAttribute("setItemListForm", setItemListForm);
@@ -129,9 +133,8 @@ public class SetItemController {
 
 		SetItemListForm setItemListForm = new SetItemListForm();
 
-		setItemListForm.setSetItemList(
-				setItemService.getSetItemListByCodeAndNameLikeAndTenpoCode(setItemSearchForm.getSetItemCode(),
-						setItemSearchForm.getSetItemName(), setItemSearchForm.getTenpoCode()));
+		setItemListForm.setSetItemList(setItemService.getSetItemListBySetItemCdAndSetItemNmLikeAndTenpoCd(
+				setItemSearchForm.getSetItemCd(), setItemSearchForm.getSetItemNm(), setItemSearchForm.getTenpoCd()));
 		model.addAttribute("setItemListForm", setItemListForm);
 		return "setItem/master/list";
 	}
@@ -157,9 +160,8 @@ public class SetItemController {
 			return ResponseEntity.notFound().build();
 		}
 
-		List<SetItem> setItemList = setItemService.getSetItemListByCodeAndNameLikeAndTenpoCode(
-				setItemSearchForm.getSetItemCode(), setItemSearchForm.getSetItemName(),
-				setItemSearchForm.getTenpoCode());
+		List<SetItem> setItemList = setItemService.getSetItemListBySetItemCdAndSetItemNmLikeAndTenpoCd(
+				setItemSearchForm.getSetItemCd(), setItemSearchForm.getSetItemNm(), setItemSearchForm.getTenpoCd());
 
 		CsvMapper csvMapper = new CsvMapper();
 		csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
@@ -176,22 +178,22 @@ public class SetItemController {
 		for (SetItem setItem : setItemList) {
 
 			// 店舗取得
-			Tenpo tenpo = tenpoList.stream().filter(obj -> obj.getCode().equals(setItem.getTenpoCode())).findFirst()
+			Tenpo tenpo = tenpoList.stream().filter(obj -> obj.getTenpoCd().equals(setItem.getTenpoCd())).findFirst()
 					.orElse(new Tenpo());
 
-			List<BaraItem> baraItemList = setItemService.getBaraItemByTenpoCodeAndSetItemCode(setItem.getTenpoCode(),
-					setItem.getCode());
+			List<BaraItem> baraItemList = setItemService.getBaraItemByTenpoCdAndSetItemCd(setItem.getTenpoCd(),
+					setItem.getSetItemCd());
 
 			for (BaraItem baraItem : baraItemList) {
 
 				SetItemCsv setItemCsv = new SetItemCsv();
 
-				setItemCsv.setTenpoCode(setItem.getTenpoCode());
-				setItemCsv.setTenpoName(tenpo.getName());
-				setItemCsv.setSetItemCode(setItem.getCode());
-				setItemCsv.setSetItemName(setItem.getName());
-				setItemCsv.setBaraItemCode(baraItem.getCode());
-				setItemCsv.setBaraItemName(baraItem.getName());
+				setItemCsv.setTenpoCd(setItem.getTenpoCd());
+				setItemCsv.setTenpoNm(tenpo.getTenpoNm());
+				setItemCsv.setSetItemCd(setItem.getSetItemCd());
+				setItemCsv.setSetItemNm(setItem.getSetItemNm());
+				setItemCsv.setBaraItemCd(baraItem.getBaraItemCd());
+				setItemCsv.setBaraItemNm(baraItem.getBaraItemNm());
 				setItemCsv.setQuantity(baraItem.getQuantity());
 				setItemCsv.setPrice(baraItem.getPrice());
 
@@ -203,7 +205,7 @@ public class SetItemController {
 			String body = csvMapper.writer(schema).writeValueAsString(setItemCsvList);
 			return ResponseEntity.ok()
 					.header(HttpHeaders.CONTENT_DISPOSITION,
-							"attachment; filename=\"SetSyohn_" + setItemSearchForm.getTenpoCode() + ".csv\"")
+							"attachment; filename=\"SetSyohn_" + setItemSearchForm.getTenpoCd() + ".csv\"")
 					.contentType(MediaType.TEXT_PLAIN).body(body);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
@@ -218,14 +220,13 @@ public class SetItemController {
 	 * 含まれていない場合、新規登録画面
 	 * 
 	 * @param model
-	 * @param setItemCode
-	 * @param tenpoCode
+	 * @param setItemCd
+	 * @param tenpoCd
 	 * @return
 	 */
 	@GetMapping("/setItem/master/detail")
-	public String setItemMasterDetail(Model model,
-			@RequestParam(name = "setItemCode", required = false) String setItemCode,
-			@RequestParam(name = "tenpoCode", required = false) String tenpoCode) {
+	public String setItemMasterDetail(Model model, @RequestParam(name = "setItemCd", required = false) String setItemCd,
+			@RequestParam(name = "tenpoCd", required = false) String tenpoCd) {
 
 		@SuppressWarnings("unchecked")
 		List<Tenpo> tenpoList = (List<Tenpo>) model.getAttribute("tenpoList");
@@ -236,15 +237,15 @@ public class SetItemController {
 		setItemForm.setBaraItemList(baraItemList);
 
 		// セット商品情報がgetパラメータで送られてきた場合は更新の設定をする
-		if (tenpoCode != null && setItemCode != null) {
-			setItemForm.setSetItem(setItemService.getSetItemByCodeAndTenpoCode(setItemCode, tenpoCode));
-			setItemForm.setBaraItemList(setItemService.getBaraItemByTenpoCodeAndSetItemCode(tenpoCode, setItemCode));
+		if (tenpoCd != null && setItemCd != null) {
+			setItemForm.setSetItem(setItemService.getSetItemBySetItemCdAndTenpoCd(setItemCd, tenpoCd));
+			setItemForm.setBaraItemList(setItemService.getBaraItemByTenpoCdAndSetItemCd(tenpoCd, setItemCd));
 			setItemForm.setEditFlg(true);
 
 			// 店舗名セット
 			for (Tenpo tenpo : tenpoList) {
-				if (tenpoCode.equals(tenpo.getCode())) {
-					setItemForm.setTenpoName(tenpo.getName());
+				if (tenpoCd.equals(tenpo.getTenpoCd())) {
+					setItemForm.setTenpoNm(tenpo.getTenpoNm());
 					break;
 				}
 			}
@@ -257,7 +258,7 @@ public class SetItemController {
 			model.addAttribute("action", "insert");
 		}
 
-		model.addAttribute("tenpoCode", tenpoCode);
+		model.addAttribute("tenpoCd", tenpoCd);
 		model.addAttribute("setItemForm", setItemForm);
 
 		return "setItem/master/detail";
@@ -276,6 +277,7 @@ public class SetItemController {
 			BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
+			model.addAttribute("action", "insert");
 			return "setItem/master/detail";
 		}
 
@@ -300,7 +302,7 @@ public class SetItemController {
 			model.addAttribute("message", "登録が完了しました");
 		}
 
-		return "setItem/complete";
+		return "setItem/master/complete";
 	}
 
 	/**
@@ -316,6 +318,7 @@ public class SetItemController {
 			BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
+			model.addAttribute("action", "update");
 			return "setItem/master/detail";
 		}
 
@@ -333,7 +336,12 @@ public class SetItemController {
 
 		boolean result = false;
 
-		result = setItemService.updateSetItem(setItemForm);
+		try {
+			result = setItemService.updateSetItem(setItemForm);
+		} catch (NoResultException e) {
+			model.addAttribute("message", "エラー：更新対象が見つかりません。");
+			return "setItem/master/detail";
+		}
 
 		if (!result) {
 			model.addAttribute("message", "エラー：登録に失敗しました。");
@@ -342,7 +350,7 @@ public class SetItemController {
 			model.addAttribute("message", "登録が完了しました");
 		}
 
-		return "setItem/complete";
+		return "setItem/master/complete";
 	}
 
 	/**
@@ -364,7 +372,7 @@ public class SetItemController {
 			redirectAttributes.addAttribute("message", "登録が完了しました");
 		}
 
-		return "setItem/complete";
+		return "setItem/master/complete";
 	}
 
 	/**
@@ -391,13 +399,20 @@ public class SetItemController {
 			return "setItem/upload/index";
 		}
 
-		boolean result = setItemService.uploadSetItem(setItemUploadForm);
+		boolean result = false;
+
+		try {
+			result = setItemService.uploadSetItem(setItemUploadForm);
+		} catch (InvalidInputException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "setItem/upload/index";
+		}
 
 		if (!result) {
 			model.addAttribute("errorMessage", "エラーが発生しました");
 			return "setItem/upload/index";
 		}
 
-		return "setItem/complete";
+		return "setItem/upload/complete";
 	}
 }

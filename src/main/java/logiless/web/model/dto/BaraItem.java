@@ -6,6 +6,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,15 +22,16 @@ import lombok.Setter;
 public class BaraItem {
 
 	@Pattern(regexp = "^[0-9]{10}$", message = "バラ商品コードは半角数字10桁で入力してください")
-	private String code;
+	private String baraItemCd;
 
-	private String name;
+	@Size(max = 100, message = "バラ商品名は全角100桁以内で入力してください")
+	private String baraItemNm;
 
 	@Pattern(regexp = "^[0-9]{4}$", message = "店舗コードは半角数字4桁で入力してください")
-	private String tenpoCode;
+	private String tenpoCd;
 
 	@Pattern(regexp = "^[0-9]{10}$", message = "セット商品コードは半角数字10桁で入力してください")
-	private String setItemCode;
+	private String setItemCd;
 
 	@NotNull
 	@PositiveOrZero(message = "数量は0以上を入力してください")

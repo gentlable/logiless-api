@@ -16,7 +16,7 @@ import lombok.Setter;
  *
  */
 @Entity
-@Table(name = "API_T_OAUTH_TOKEN")
+@Table(name = "M_API_OAUTH_TOKEN")
 @Getter
 @Setter
 @AllArgsConstructor

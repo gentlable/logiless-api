@@ -10,32 +10,28 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * セット商品重複チェックアノテーション<br>
- * 店舗コードとセット商品コードをキーにセット商品の重複チェックを行う
+ * バラ商品重複チェックアノテーション<br>
+ * セット商品登録時、バラ商品コードが重複して入力されていないかチェックする
  * 
  * @author nsh14789
  *
  */
-@Target({ ElementType.FIELD, ElementType.TYPE, ElementType.METHOD })
+@Target({ ElementType.FIELD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = SetItemDuplicateValidator.class)
-public @interface SetItemDuplicate {
+@Constraint(validatedBy = BaraItemDuplicateValidator.class)
+public @interface BaraItemDuplicate {
 
-	String message() default "入力されたセット商品は既に存在しています。";
+	String message() default "バラ商品コードが重複しています。";
 
 	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
 
-	String setItemCd();
-
-	String tenpoCd();
-
 	@Target({ ElementType.FIELD })
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@interface List {
-		SetItemDuplicate[] values();
+		BaraItemDuplicate[] values();
 	}
 
 }
